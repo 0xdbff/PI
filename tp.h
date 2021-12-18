@@ -1,6 +1,7 @@
 #ifndef __TP_H__
 #define __TP_H__
 
+#include "dyn_alloc.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>

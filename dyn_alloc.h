@@ -2,14 +2,8 @@
 #define __DYN_ALLOC_H__
 
 #include <assert.h>
-#include <stdbool.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
-//! the main goal is to create generic code to be reusable, an implementation
-//! of a dynamic array type (Vec) like the existing ones on Rust c++ Java (...)
 
 #define V_ALLOC 64
 // +------+----------+---------+
@@ -24,8 +18,13 @@ typedef struct Vec {
 } Vec;
 
 Vec *vec_create();
-void vec_destroy(Vec *);
-
 size_t vec_get(Vec *, size_t);
+void vec_expand(Vec *);
+void vec_halve(Vec *);
+void vec_push(Vec *v, size_t value);
+void vec_change_at(Vec *, size_t, size_t value);
+void vec_push_at(Vec *, size_t, size_t value);
+void vec_rm_at(Vec *, size_t);
+void vec_destroy(Vec *);
 
 #endif

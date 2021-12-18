@@ -1,5 +1,4 @@
 #include "dyn_alloc.h"
-#include "tp.h"
 
 Vec *vec_create() {
   Vec *v = (Vec *)malloc(sizeof(Vec));
