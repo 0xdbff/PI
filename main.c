@@ -1,12 +1,19 @@
 #include "tp.h"
 
-extern inline void swap_t(void *p1, void *p2, void *tmp, size_t pSize);
+extern inline Vehicle *build(char *id, char *type, char *price, char *autonomy);
 
-int main() {
-  size_t a = 3;
-  size_t b = 43;
-  size_t bv = 43;
-  SWAP(a, b);
-  printf("%d%d", a, b);
+inline Order *order_alloc(size_t size) {
+  return (Order *)malloc(sizeof(Order) * size);
+}
+
+inline Vehicle *vehicle_alloc(size_t size) {
+  return (Vehicle *)malloc(sizeof(Vehicle) * size);
+}
+
+int main(int argc, char **argv) {
+
+  Vehicle *vehicles = read_vehicles();
+  Order *orders = read_orders();
+
   return 0;
 }

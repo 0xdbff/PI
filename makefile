@@ -6,14 +6,14 @@ ifeq ($(ARCH), X86_64)
 else
 	CC = clang
 endif
-CFLAGS = -c		\
-	 -g		\
-	 -W		\
-	 -Wall		\
-	 -pedantic
-SRC  	 = $(wildcard *.c)
-OBJ	 = $(SRC:.c=.o)
-LDFL	 = #libs like math...
+CFLAGS= -c		\
+	-g		\
+	-W		\
+	-Wall		\
+	-pedantic
+SRC	= $(wildcard *.c)
+OBJ	= $(SRC:.c=.o)
+LDFL	= #libs like math...
 
 all: $(EXEC)
 
@@ -21,7 +21,7 @@ ${EXEC}: $(OBJ)
 	$(CC) -o $@ $^ $(LDFL)
 
 %.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGS)
+	$(CC) -o $@ $< $(CFLAGS)
 
 .PHONY: clean mrproper
 

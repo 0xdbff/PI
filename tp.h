@@ -1,5 +1,5 @@
-#ifndef HASHMAP_H
-#define HASHMAP_H
+#ifndef __TP_H__
+#define __TP_H__
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -19,8 +19,16 @@ typedef struct Order {
   char *nif;
   Vehicle *v_id;
   size_t time;
+  bool active;
 } Order;
 
+// to allow dynamic memory management
+size_t ORDER_ALLOCS = 0;
+size_t ORDERS = 0;
+size_t VEHICLE_ALLOCS = 0;
+size_t VEHICLES = 0;
+
+inline Vehicle *build(char *id, char *type, char *price, char *autonomy);
 // inline function definition called from SWAP macro
 inline void swap_t(void *p1, void *p2, void *tmp, size_t pSize) {
   memcpy(tmp, p1, pSize);

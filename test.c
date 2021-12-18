@@ -1,43 +1,59 @@
 #include "tp.h"
 
-void menu() { puts(""); }
+static inline size_t count_lines(FILE *fp);
 
-#define PAGE_SIZE 1024 // 1K buffer; you can make this larger or smaller
+Order *read_orders() {
+  size_t lines = count_lines(fp);
+  char *order[lines];
+  size_t n;
 
-/**
- * Read up to the next newline character from the specified stream.
- * Dynamically allocate and extend a buffer as necessary to hold
- * the line contents.
- *
- * The final size of the generated buffer is written to bufferSize.
- *
- * Returns NULL if the buffer cannot be allocated or if extending it
- * fails.
- */
-char *getNextLine(FILE *stream, size_t *bufferSize) {
-  char input[PAGE_SIZE]; // allocate
-  int done = 0;
-  char *targetBuffer = NULL;
-  *bufferSize = 0;
+  for (size_t i = 0; i < lines; i++) {
+    order[i] = NULL;
+    size_t n = 0;
 
-  while (!done) {
-    if (fgets(input, sizeof input, stream) != NULL) {
-      char *tmp;
-      char *newline = strchr(input, '\n');
-      if (newline != NULL) {
-        done = 1;
-        *newline = 0;
-      }
-      tmp = realloc(targetBuffer, sizeof *tmp * (*bufferSize + strlen(input)));
-      if (tmp) {
-        targetBuffer = tmp;
-        *bufferSize += strlen(input);
-        strcat(targetBuffer, input);
-      } else {
-        free(targetBuffer);
-        targetBuffer = NULL;
-        *bufferSize = 0;
-        fprintf(stderr, "Unable to allocate or extend input buffer\n");
-      }
-    }
+    getline(&order[i], &n, fp);
+
+    if (ferror(fp))
+      goto error_on_file_read;
   }
+  free(order);
+
+error_on_file_read:
+  perror("Ficheiro das ordens nao encontrado ou nao apto para leitura.");
+  exit(1);
+}
+
+static inline size_t count_lines(FILE *fp) {
+  char cr = '\0';
+  size_t lines = 0;
+
+  while (cr != EOF) {
+    if (cr == '\n') {
+      lines++;
+    }
+    cr = getc(fp);
+  }
+  rewind(fp);
+  return lines;
+}
+
+Vehicle *read_vehicles() {
+  size_t lines = count_lines(fp);
+  char *vehicles[lines];
+  size_t n;
+
+  for (size_t i = 0; i < lines; i++) {
+    order[i] = NULL;
+    size_t n = 0;
+
+    getline(&order[i], &n, fp);
+
+    if (ferror(fp))
+      goto error_on_file_read;
+  }
+  free(order);
+
+error_on_file_read:
+  perror("Ficheiro dos veiculos nao encontrado ou nao apto para leitura.");
+  exit(1);
+}
