@@ -22,12 +22,6 @@ typedef struct Order {
   bool active;
 } Order;
 
-// to allow dynamic memory management
-size_t ORDER_ALLOCS = 0;
-size_t ORDERS = 0;
-size_t VEHICLE_ALLOCS = 0;
-size_t VEHICLES = 0;
-
 inline Vehicle *build(char *id, char *type, char *price, char *autonomy);
 // inline function definition called from SWAP macro
 inline void swap_t(void *p1, void *p2, void *tmp, size_t pSize) {
