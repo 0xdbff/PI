@@ -69,13 +69,13 @@ void vec_halve(Vec *v) {
 
 void vec_push(Vec *v, size_t value) {
   assert(v);
-  if (v->size = v->capacity) {
+  if (v->size == v->capacity) {
     vec_expand(v);
   }
   v->data[v->size++] = value;
 }
 
-void vec_change_at(vector v, size_t i, size_t value) {
+void vec_change_at(Vec *v, size_t i, size_t value) {
   assert(v);
   if (i < 0 || i >= v->size) {
     perror("Out of index!");
@@ -84,18 +84,41 @@ void vec_change_at(vector v, size_t i, size_t value) {
   v->data[i] = value;
 }
 
-void vec_push_at(vector v, size_t i, size_t value) {
+void vec_push_at(Vec *v, size_t i, size_t value) {
   assert(v);
   if (i < 0 || i >= v->size) {
-    perror("not able to allocate element!");
+    perror("Out of index!");
     abort();
   }
-  if (v->size = v->capacity) {
+  if (v->size == v->capacity) {
     vec_expand(v);
   }
-  for (int x = v->size; x > i; x--) {
-    v->data[j] = v->data[j - 1];
+  for (size_t x = v->size; x > i; x--) {
+    v->data[x] = v->data[x - 1];
   }
   v->data[i] = value;
   v->size++;
+}
+
+void vec_rm_at(Vec *v, size_t i) {
+  assert(v);
+  if (i < 0 || i >= v->size) {
+    perror("Out of index!");
+    abort();
+  }
+  for (size_t x = i + 1; x < v->size; x++) {
+    v->data[x - 1] = v->data[x];
+  }
+  v->size--;
+  if (v->size < v->capacity / 4) {
+    vec_halve(v);
+  }
+}
+
+void vec_clear(Vec *v) {
+  assert(v);
+  v->size = 0;
+  while (v->capacity > V_ALLOC) {
+    vec_halve(v);
+  }
 }
