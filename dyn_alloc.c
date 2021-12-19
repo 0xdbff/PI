@@ -24,6 +24,15 @@ void vec_destroy(Vec *v) {
   free(v);
 }
 
+int vec_is_empty(Vec *v) {
+  assert(v);
+  return v->size == 0;
+}
+size_t vec_size(Vec *v) {
+  assert(v);
+  return v->size;
+}
+
 size_t vec_get(Vec *v, size_t i) {
   assert(v);
   if (i < 0 || i >= v->size) {
