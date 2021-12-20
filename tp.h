@@ -2,7 +2,7 @@
 #define __TP_H__
 
 #include "dyn_alloc.h"
-#include "vec.h"
+//#include "vec.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
