@@ -13,6 +13,6 @@ void menu() {
   puts("9=> listar o plano de utilizacao de um determinado veiculo");
   puts("c=> clear");
   puts("e=> apresentar estatisticas ate ao momento");
-  puts("s=> as operacoes sao automaticamente guardadas caso
-      pretenda obter os dados anteriores prima esta opcao.");
+  puts("s=> as operacoes sao automaticamente guardadas caso pretenda obter os "
+       "dados anteriores prima esta opcao.");
 }

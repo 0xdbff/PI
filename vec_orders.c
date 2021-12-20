@@ -1,7 +1,7 @@
-#include "dyn_alloc.h"
+#include "vec.h"
 
-Vec *vec_create() {
-  Vec *v = (Vec *)malloc(sizeof(Vec));
+Orders *vec_orders_new() {
+  Order *v = (Order *)malloc(sizeof(Order));
   if (v == NULL) {
     goto error;
   }
@@ -18,22 +18,23 @@ error:
   exit(1);
 }
 
-void vec_destroy(Vec *v) {
+void vec_orders_destroy(Orders *v) {
   assert(v);
   free(v->data);
   free(v);
 }
 
-int vec_is_empty(Vec *v) {
+int vec_orders_is_empty(Vehicles *v) {
   assert(v);
   return v->size == 0;
 }
-size_t vec_size(Vec *v) {
+
+size_t vec_orders_size(Orders *v) {
   assert(v);
   return v->size;
 }
 
-size_t vec_get(Vec *v, size_t i) {
+Order *vec_orders_get(Orders *v, size_t i) {
   assert(v);
   if (i < 0 || i >= v->size) {
     perror("not able to reach element");
@@ -42,7 +43,7 @@ size_t vec_get(Vec *v, size_t i) {
   return v->data[i];
 }
 
-void vec_expand(Vec *v) {
+void vec_orders_expand(Orders *v) {
   assert(v);
   size_t new_capacity = 2 * v->capacity;
   size_t *new_array = (size_t *)malloc(sizeof(size_t) * new_capacity);
@@ -58,7 +59,7 @@ void vec_expand(Vec *v) {
   v->capacity = new_capacity;
 }
 
-void vec_halve(Vec *v) {
+void vec_orders_halve(Orders *v) {
   assert(v);
   size_t new_capacity = v->capacity / 2;
   size_t *new_array = (size_t *)malloc(sizeof(size_t) * new_capacity);
@@ -75,7 +76,7 @@ void vec_halve(Vec *v) {
   v->size = v->size < new_capacity ? v->size : new_capacity;
 }
 
-void vec_push(Vec *v, size_t value) {
+void vec_orders_push(Orders *v, Order *value) {
   assert(v);
   if (v->size == v->capacity) {
     vec_expand(v);
@@ -83,7 +84,7 @@ void vec_push(Vec *v, size_t value) {
   v->data[v->size++] = value;
 }
 
-void vec_change_at(Vec *v, size_t i, size_t value) {
+void vec_orders_change_at(Orders *v, size_t i, Order *value) {
   assert(v);
   if (i < 0 || i >= v->size) {
     perror("Out of index!");
@@ -92,7 +93,7 @@ void vec_change_at(Vec *v, size_t i, size_t value) {
   v->data[i] = value;
 }
 
-void vec_push_at(Vec *v, size_t i, size_t value) {
+void vec_orders_push_at(Orders *v, size_t i, Order *value) {
   assert(v);
   if (i < 0 || i >= v->size) {
     perror("Out of index!");
@@ -108,7 +109,7 @@ void vec_push_at(Vec *v, size_t i, size_t value) {
   v->size++;
 }
 
-void vec_rm_at(Vec *v, size_t i) {
+void vec_orders_rm_at(Orders *v, size_t i) {
   assert(v);
   if (i < 0 || i >= v->size) {
     perror("Out of index!");
@@ -123,7 +124,7 @@ void vec_rm_at(Vec *v, size_t i) {
   }
 }
 
-void vec_clear(Vec *v) {
+void vec_orders_clear(Orders *v) {
   assert(v);
   v->size = 0;
   while (v->capacity > V_ALLOC) {
