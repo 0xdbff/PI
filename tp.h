@@ -1,7 +1,6 @@
 #ifndef __TP_H__
 #define __TP_H__
 
-#include "vec.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>

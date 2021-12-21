@@ -1,13 +1,13 @@
 #include "vec.h"
 
 Orders *vec_orders_new() {
-  Order *v = (Order *)malloc(sizeof(Order));
+  Orders *v = (Orders *)malloc(sizeof(Orders));
   if (v == NULL) {
     goto error;
   }
-  v->size = 0;
+  v->len = 0;
   v->capacity = V_ALLOC;
-  v->data = (size_t *)malloc(sizeof(size_t) * v->capacity);
+  v->data = (Order *)malloc(sizeof(Order) * v->capacity);
   if (v->data == NULL) {
     goto error;
   }
@@ -24,34 +24,34 @@ void vec_orders_destroy(Orders *v) {
   free(v);
 }
 
-int vec_orders_is_empty(Vehicles *v) {
+int vec_orders_is_empty(Orders *v) {
   assert(v);
-  return v->size == 0;
+  return v->len == 0;
 }
 
-size_t vec_orders_size(Orders *v) {
+size_t vec_orders_len(Orders *v) {
   assert(v);
-  return v->size;
+  return v->len;
 }
 
 Order *vec_orders_get(Orders *v, size_t i) {
   assert(v);
-  if (i < 0 || i >= v->size) {
+  if (i < 0 || i >= v->len) {
     perror("not able to reach element");
     exit(1);
   }
-  return v->data[i];
+  return &v->data[i];
 }
 
 void vec_orders_expand(Orders *v) {
   assert(v);
   size_t new_capacity = 2 * v->capacity;
-  size_t *new_array = (size_t *)malloc(sizeof(size_t) * new_capacity);
+  Order *new_array = (Order *)malloc(sizeof(Order) * new_capacity);
   if (new_array == NULL) {
     perror("not able to expand vector on memory!");
     exit(1);
   }
-  for (size_t i = 0; i < v->size; i++) {
+  for (size_t i = 0; i < v->len; i++) {
     new_array[i] = v->data[i];
   }
   free(v->data);
@@ -62,72 +62,72 @@ void vec_orders_expand(Orders *v) {
 void vec_orders_halve(Orders *v) {
   assert(v);
   size_t new_capacity = v->capacity / 2;
-  size_t *new_array = (size_t *)malloc(sizeof(size_t) * new_capacity);
+  Order *new_array = (Order *)malloc(sizeof(Order) * new_capacity);
   if (new_array == NULL) {
     perror("not able to halve vector on memory!");
     exit(1);
   }
-  for (size_t i = 0; i < v->size; i++) {
+  for (size_t i = 0; i < v->len; i++) {
     new_array[i] = v->data[i];
   }
   free(v->data);
   v->data = new_array;
   v->capacity = new_capacity;
-  v->size = v->size < new_capacity ? v->size : new_capacity;
+  v->len = v->len < new_capacity ? v->len : new_capacity;
 }
 
 void vec_orders_push(Orders *v, Order *value) {
   assert(v);
-  if (v->size == v->capacity) {
-    vec_expand(v);
+  if (v->len == v->capacity) {
+    vec_orders_expand(v);
   }
-  v->data[v->size++] = value;
+  v->data[v->len++] = *value;
 }
 
 void vec_orders_change_at(Orders *v, size_t i, Order *value) {
   assert(v);
-  if (i < 0 || i >= v->size) {
+  if (i < 0 || i >= v->len) {
     perror("Out of index!");
     abort();
   }
-  v->data[i] = value;
+  v->data[i] = *value;
 }
 
 void vec_orders_push_at(Orders *v, size_t i, Order *value) {
   assert(v);
-  if (i < 0 || i >= v->size) {
+  if (i < 0 || i >= v->len) {
     perror("Out of index!");
     abort();
   }
-  if (v->size == v->capacity) {
-    vec_expand(v);
+  if (v->len == v->capacity) {
+    vec_orders_expand(v);
   }
-  for (size_t x = v->size; x > i; x--) {
+  for (size_t x = v->len; x > i; x--) {
     v->data[x] = v->data[x - 1];
   }
-  v->data[i] = value;
-  v->size++;
+  v->data[i] = *value;
+  v->len++;
 }
 
 void vec_orders_rm_at(Orders *v, size_t i) {
   assert(v);
-  if (i < 0 || i >= v->size) {
+  if (i < 0 || i >= v->len) {
     perror("Out of index!");
     abort();
   }
-  for (size_t x = i + 1; x < v->size; x++) {
+  for (size_t x = i + 1; x < v->len; x++) {
     v->data[x - 1] = v->data[x];
   }
-  v->size--;
-  if (v->size < v->capacity / 4) {
-    vec_halve(v);
+  v->len--;
+  if (v->len < v->capacity / 4) {
+    vec_orders_halve(v);
   }
 }
 
 void vec_orders_clear(Orders *v) {
   assert(v);
-  v->size = 0;
+  v->len = 0;
   while (v->capacity > V_ALLOC) {
-    vec_halve(v);
+    vec_orders_halve(v);
   }
 }

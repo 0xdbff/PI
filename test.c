@@ -1,4 +1,4 @@
-#include "tp.h"
+#include "vec.h"
 
 static inline size_t count_lines(FILE *fp);
 
