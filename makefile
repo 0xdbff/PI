@@ -1,13 +1,14 @@
 EXEC  = $(shell basename $$(pwd))
 ARCH := $(shell uname -p)
 #MODIFY IF NEDDED
-ifeq ($(ARCH), X86_64)
+ifeq ($(ARCH), x86_64)
 	CC = gcc
 else
 	CC = clang
 endif
+#replace 03 with -g to debug
 CFLAGS= -c		\
-	-g		\
+	-O3		\
 	-W		\
 	-Wall		\
 	-pedantic

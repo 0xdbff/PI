@@ -36,7 +36,7 @@ size_t vec_orders_len(Orders *v) {
 
 Order *vec_orders_get(Orders *v, size_t i) {
   assert(v);
-  if (i < 0 || i >= v->len) {
+  if (i >= v->len) {
     perror("not able to reach element");
     exit(1);
   }
@@ -86,7 +86,7 @@ void vec_orders_push(Orders *v, Order *value) {
 
 void vec_orders_change_at(Orders *v, size_t i, Order *value) {
   assert(v);
-  if (i < 0 || i >= v->len) {
+  if (i >= v->len) {
     perror("Out of index!");
     abort();
   }
@@ -95,7 +95,7 @@ void vec_orders_change_at(Orders *v, size_t i, Order *value) {
 
 void vec_orders_push_at(Orders *v, size_t i, Order *value) {
   assert(v);
-  if (i < 0 || i >= v->len) {
+  if (i >= v->len) {
     perror("Out of index!");
     abort();
   }
@@ -111,7 +111,7 @@ void vec_orders_push_at(Orders *v, size_t i, Order *value) {
 
 void vec_orders_rm_at(Orders *v, size_t i) {
   assert(v);
-  if (i < 0 || i >= v->len) {
+  if (i >= v->len) {
     perror("Out of index!");
     abort();
   }

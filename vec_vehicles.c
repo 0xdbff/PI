@@ -36,7 +36,7 @@ size_t vec_vehicles_len(Vehicles *v) {
 
 Vehicle *vec_vehicles_get(Vehicles *v, size_t i) {
   assert(v);
-  if (i < 0 || i >= v->len) {
+  if (i >= v->len) {
     perror("not able to reach element");
     exit(1);
   }
@@ -76,6 +76,17 @@ void vec_vehicles_halve(Vehicles *v) {
   v->len = v->len < new_capacity ? v->len : new_capacity;
 }
 
+void vec_vehicles_push_alloc(Vehicles *v, char **id, char **type, float *price,
+                             unsigned int *autonomy) {
+  assert(v);
+  Vehicle *value = (Vehicle *)malloc(sizeof(Vehicle));
+
+  if (v->len == v->capacity) {
+    vec_vehicles_expand(v);
+  }
+  v->data[v->len++] = *value;
+}
+
 void vec_vehicles_push(Vehicles *v, Vehicle *value) {
   assert(v);
   if (v->len == v->capacity) {
@@ -86,7 +97,7 @@ void vec_vehicles_push(Vehicles *v, Vehicle *value) {
 
 void vec_vehicles_change_at(Vehicles *v, size_t i, Vehicle *value) {
   assert(v);
-  if (i < 0 || i >= v->len) {
+  if (i >= v->len) {
     perror("Out of index!");
     abort();
   }
@@ -95,7 +106,7 @@ void vec_vehicles_change_at(Vehicles *v, size_t i, Vehicle *value) {
 
 void vec_vehicles_push_at(Vehicles *v, size_t i, Vehicle *value) {
   assert(v);
-  if (i < 0 || i >= v->len) {
+  if (i >= v->len) {
     perror("Out of index!");
     abort();
   }
@@ -111,7 +122,7 @@ void vec_vehicles_push_at(Vehicles *v, size_t i, Vehicle *value) {
 
 void vec_vehicles_rm_at(Vehicles *v, size_t i) {
   assert(v);
-  if (i < 0 || i >= v->len) {
+  if (i >= v->len) {
     perror("Out of index!");
     abort();
   }
