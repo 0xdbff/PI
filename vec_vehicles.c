@@ -18,31 +18,6 @@ error:
   exit(1);
 }
 
-void vec_vehicles_destroy(Vehicles *v) {
-  assert(v);
-  free(v->data);
-  free(v);
-}
-
-int vec_vehicles_is_empty(Vehicles *v) {
-  assert(v);
-  return v->len == 0;
-}
-
-size_t vec_vehicles_len(Vehicles *v) {
-  assert(v);
-  return v->len;
-}
-
-Vehicle *vec_vehicles_get(Vehicles *v, size_t i) {
-  assert(v);
-  if (i >= v->len) {
-    perror("not able to reach element");
-    exit(1);
-  }
-  return &v->data[i];
-}
-
 void vec_vehicles_expand(Vehicles *v) {
   assert(v);
   size_t new_capacity = 2 * v->capacity;
@@ -74,10 +49,39 @@ void vec_vehicles_halve(Vehicles *v) {
   v->data = new_array;
   v->capacity = new_capacity;
   v->len = v->len < new_capacity ? v->len : new_capacity;
+
+error:
+  perror("not able to allocate memory!");
+  exit(1);
 }
 
-void vec_vehicles_push_alloc(Vehicles *v, char **id, char **type, float *price,
-                             unsigned int *autonomy) {
+void vec_vehicles_destroy(Vehicles *v) {
+  assert(v);
+  free(v->data);
+  free(v);
+}
+
+int vec_vehicles_is_empty(Vehicles *v) {
+  assert(v);
+  return v->len == 0;
+}
+
+size_t vec_vehicles_len(Vehicles *v) {
+  assert(v);
+  return v->len;
+}
+
+Vehicle *vec_vehicles_get(Vehicles *v, size_t i) {
+  assert(v);
+  if (i >= v->len) {
+    perror("not able to reach element");
+    exit(1);
+  }
+  return &v->data[i];
+}
+
+void vec_vehicles_push_alloc(Vehicles *v, char *id, char *type, float price,
+                             unsigned int autonomy) {
   assert(v);
   Vehicle *value = (Vehicle *)malloc(sizeof(Vehicle));
 

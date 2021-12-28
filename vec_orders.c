@@ -18,31 +18,6 @@ error:
   exit(1);
 }
 
-void vec_orders_destroy(Orders *v) {
-  assert(v);
-  free(v->data);
-  free(v);
-}
-
-int vec_orders_is_empty(Orders *v) {
-  assert(v);
-  return v->len == 0;
-}
-
-size_t vec_orders_len(Orders *v) {
-  assert(v);
-  return v->len;
-}
-
-Order *vec_orders_get(Orders *v, size_t i) {
-  assert(v);
-  if (i >= v->len) {
-    perror("not able to reach element");
-    exit(1);
-  }
-  return &v->data[i];
-}
-
 void vec_orders_expand(Orders *v) {
   assert(v);
   size_t new_capacity = 2 * v->capacity;
@@ -57,6 +32,23 @@ void vec_orders_expand(Orders *v) {
   free(v->data);
   v->data = new_array;
   v->capacity = new_capacity;
+}
+
+Order *vec_orders_get(Orders *v, size_t idx) {
+  assert(v);
+  if (idx >= v->len) {
+    perror("not able to reach element");
+    exit(1);
+  }
+  return &v->data[idx];
+}
+
+void vec_orders_push(Orders *v, Order *value) {
+  assert(v);
+  if (v->len == v->capacity) {
+    vec_orders_expand(v);
+  }
+  v->data[v->len++] = *value;
 }
 
 void vec_orders_halve(Orders *v) {
@@ -76,12 +68,22 @@ void vec_orders_halve(Orders *v) {
   v->len = v->len < new_capacity ? v->len : new_capacity;
 }
 
-void vec_orders_push(Orders *v, Order *value) {
+void vec_orders_destroy(Orders *v) {
   assert(v);
-  if (v->len == v->capacity) {
-    vec_orders_expand(v);
-  }
-  v->data[v->len++] = *value;
+  for (size_t i = 0; i < v->len; i++)
+    free((&v->data[i])->nif);
+  free(v->data);
+  free(v);
+}
+
+bool vec_orders_is_empty(Orders *v) {
+  assert(v);
+  return v->len == 0;
+}
+
+size_t vec_orders_len(Orders *v) {
+  assert(v);
+  return v->len;
 }
 
 void vec_orders_change_at(Orders *v, size_t i, Order *value) {

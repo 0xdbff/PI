@@ -16,10 +16,24 @@ typedef struct Vehicle {
 
 typedef struct Order {
   size_t id;
-  char *nif;
+  size_t nif;
   Vehicle *v_id;
-  uint32_t time;
+  unsigned int time;
+  unsigned int distance;
 } Order;
+
+#ifndef VEHICLE_ID_MAX_CHARS
+#define VEHICLE_ID_MAX_CHARS 32
+#define VEHICLE_TYPE_MAX_CHARS 48
+#endif
+
+Vehicle *vehicle_build(char *id, char *type, float price,
+                       unsigned int autonomy);
+
+Order *order_build(size_t id, char *nif, Vehicle *v_id, unsigned int time,
+                   unsigned int distance);
+
+// bool validate_order(Order *v);
 
 void menu();
 #endif
