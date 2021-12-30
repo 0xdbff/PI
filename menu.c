@@ -1,6 +1,6 @@
 #include "tp.h"
 
-void menu() {
+void menu_print() {
   puts("_____________________________________________________________");
   puts("1=> inserir um novo meio de transporte urbano.");
   puts("2=> remover um transporte urbano");

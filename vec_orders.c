@@ -70,8 +70,6 @@ void vec_orders_halve(Orders *v) {
 
 void vec_orders_destroy(Orders *v) {
   assert(v);
-  for (size_t i = 0; i < v->len; i++)
-    free((&v->data[i])->nif);
   free(v->data);
   free(v);
 }

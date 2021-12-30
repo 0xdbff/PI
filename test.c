@@ -6,6 +6,43 @@
 //  printf("%d", a);
 //  return true;
 //}
+static inline void input_switch() {
+  char input = '\0';
+  if (scanf("%c", &input) != 1)
+    goto error;
+
+  switch (input) {
+  case '1':
+
+  case '2':
+
+  case '3':
+
+  case '4':
+
+  case '5':
+
+  case '6':
+
+  case '7':
+
+  case '8':
+
+  case '9':
+
+  case 'c':
+
+  default:
+    break;
+  }
+error:
+  exit(1);
+}
+
+void menu() {
+  menu_print();
+  input_switch();
+}
 
 Order *search_order_by_id(Orders *v, const size_t id) {
   for (size_t i = 0; i < v->len; i++) {
@@ -97,4 +134,3 @@ error_on_file_read:
   perror("Ficheiro dos veiculos nao encontrado ou nao apto para leitura.");
   exit(1);
 }
-

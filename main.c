@@ -1,7 +1,7 @@
 #include "vec.h"
 
-Vehicle *vehicle_build(char *id, char *type, float price,
-                       unsigned int autonomy) {
+Vehicle *vehicle_build(const char *id, const char *type, const float price,
+                       const unsigned int autonomy) {
   Vehicle *v = (Vehicle *)malloc(sizeof(Vehicle));
   v->id = strdup(id);
   v->type = strdup(type);
@@ -11,9 +11,12 @@ Vehicle *vehicle_build(char *id, char *type, float price,
   return v;
 }
 
-Order *order_build(size_t id, char *nif, Vehicle *v_id, unsigned int time,
-                   unsigned int distance) {
+Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
+                   const uint32_t time, const uint32_t distance) {
   Order *o = malloc(sizeof(Order));
+  // cant assign to const so this cast is nedded
+  // *(size_t *)&o->id = id;
+  // *(size_t *)&o->nif = nif;
   o->id = id;
   o->nif = nif;
   o->v_id = v_id;
@@ -28,14 +31,19 @@ int main(int argc, char **argv) {
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
 
-  read_vehicles(v);
-  //  vec_vehicles_get(v, 2);
-  printf("%s\n", (&v->data[2])->id);
-  printf("%s\n", (&v->data[2])->type);
-  printf("%f\n", (&v->data[2])->price);
-  printf("%u\n", (&v->data[2])->autonomy);
-  printf("%lu\n", sizeof((&v->data[2])->id));
+  vec_orders_push(o, order_build(3, 4, (&v->data[0]), 0, 0));
 
+  read_vehicles(v);
+  printf("%lu\n", (&o->data[0])->id);
+  printf("%lu\n", (&o->data[0])->nif);
+  printf("%p\n", (void *)(&o->data[0])->v_id);
+  printf("%u\n", (&o->data[0])->time);
+  printf("%u\n", (&o->data[0])->distance);
+  printf("%lu\n", sizeof((&v->data[2])->id));
+  printf("%lu\n", sizeof(*(v->data)));
+  printf("%lu\n", sizeof(*(o->data)));
+
+  menu_print();
   vec_orders_destroy(o);
   vec_vehicles_destroy(v);
 }

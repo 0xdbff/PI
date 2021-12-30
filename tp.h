@@ -11,15 +11,15 @@ typedef struct Vehicle {
   char *id;
   char *type;
   float price;
-  unsigned int autonomy;
+  uint32_t autonomy;
 } Vehicle;
 
 typedef struct Order {
   size_t id;
   size_t nif;
   Vehicle *v_id;
-  unsigned int time;
-  unsigned int distance;
+  uint32_t time;
+  uint32_t distance;
 } Order;
 
 #ifndef VEHICLE_ID_MAX_CHARS
@@ -27,13 +27,13 @@ typedef struct Order {
 #define VEHICLE_TYPE_MAX_CHARS 48
 #endif
 
-Vehicle *vehicle_build(char *id, char *type, float price,
-                       unsigned int autonomy);
+Vehicle *vehicle_build(const char *id, const char *type, const float price,
+                       const uint32_t autonomy);
 
-Order *order_build(size_t id, char *nif, Vehicle *v_id, unsigned int time,
-                   unsigned int distance);
+Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
+                   const uint32_t time, const uint32_t distance);
 
 // bool validate_order(Order *v);
 
-void menu();
+void menu_print();
 #endif
