@@ -24,7 +24,7 @@ Orders *vec_orders_new() {
   return v;
 
 error:
-  LOG_ERRNO_EXIT("Failed on memory allocation for vector, 1.536KiB", 12)
+  LOG_ERRNO_EXIT("Failed on memory allocation for vector, 1.536KiB", 12);
 }
 
 void vec_orders_expand(Orders *v) {
