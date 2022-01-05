@@ -1,6 +1,6 @@
-#include "tp.h"
+#include "vec.h"
 
-void menu_print() {
+static inline void menu_print() {
   puts("_____________________________________________________________");
   puts("1=> inserir um novo meio de transporte urbano.");
   puts("2=> remover um transporte urbano");
@@ -15,4 +15,42 @@ void menu_print() {
   puts("e=> apresentar estatisticas ate ao momento");
   puts("s=> as operacoes sao automaticamente guardadas caso pretenda obter os "
        "dados anteriores prima esta opcao.");
+}
+
+static inline void input_switch() {
+  char input = '\0';
+  if (scanf("%c", &input) != 1)
+    goto error;
+
+  switch (input) {
+  case '1':
+
+  case '2':
+
+  case '3':
+
+  case '4':
+
+  case '5':
+
+  case '6':
+
+  case '7':
+
+  case '8':
+
+  case '9':
+
+  case 'c':
+
+  default:
+    break;
+  }
+error:
+  exit(1);
+}
+
+void menu() {
+  menu_print();
+  input_switch();
 }

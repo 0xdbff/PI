@@ -14,9 +14,6 @@ Vehicle *vehicle_build(const char *id, const char *type, const float price,
 Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
                    const uint32_t time, const uint32_t distance) {
   Order *o = malloc(sizeof(Order));
-  // cant assign to const so this cast is nedded
-  // *(size_t *)&o->id = id;
-  // *(size_t *)&o->nif = nif;
   o->id = id;
   o->nif = nif;
   o->v_id = v_id;
@@ -43,7 +40,7 @@ int main(int argc, char **argv) {
   printf("%lu\n", sizeof(*(v->data)));
   printf("%lu\n", sizeof(*(o->data)));
 
-  menu_print();
+  menu();
   vec_orders_destroy(o);
   vec_vehicles_destroy(v);
 }

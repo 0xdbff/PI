@@ -35,5 +35,5 @@ Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
 
 // bool validate_order(Order *v);
 
-void menu_print();
+void menu();
 #endif

@@ -1,5 +1,8 @@
 #include "vec.h"
 
+#define LOG_ERR(X)                                                             \
+  fprintf(stderr, "\x1B[31m[ERR] -> %d : %s\033[0m", X, strerror(X))
+
 Orders *vec_orders_new() {
   Orders *v = (Orders *)malloc(sizeof(Orders));
   if (v == NULL) {
@@ -14,8 +17,8 @@ Orders *vec_orders_new() {
   return v;
 
 error:
-  perror("not able to allocate memory!");
-  exit(1);
+  LOG_ERR(12);
+  exit(12);
 }
 
 void vec_orders_expand(Orders *v) {

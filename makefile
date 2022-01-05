@@ -8,7 +8,7 @@ else
 endif
 #replace 03 with -g to debug
 CFLAGS= -c		\
-	-O3		\
+	-g		\
 	-W		\
 	-Wall		\
 	-pedantic

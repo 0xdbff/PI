@@ -6,67 +6,6 @@
 //  printf("%d", a);
 //  return true;
 //}
-static inline void input_switch() {
-  char input = '\0';
-  if (scanf("%c", &input) != 1)
-    goto error;
-
-  switch (input) {
-  case '1':
-
-  case '2':
-
-  case '3':
-
-  case '4':
-
-  case '5':
-
-  case '6':
-
-  case '7':
-
-  case '8':
-
-  case '9':
-
-  case 'c':
-
-  default:
-    break;
-  }
-error:
-  exit(1);
-}
-
-void menu() {
-  menu_print();
-  input_switch();
-}
-
-Order *search_order_by_id(Orders *v, const size_t id) {
-  for (size_t i = 0; i < v->len; i++) {
-    if (id == (&v->data[i])->id)
-      return &v->data[i];
-  }
-  return NULL;
-}
-
-Order *search_order_by_nif(Orders *v, const size_t nif) {
-  for (size_t i = 0; i < v->len; i++) {
-    if (nif == (&v->data[i])->nif)
-      return &v->data[i];
-  }
-  return NULL;
-}
-
-Vehicle *search_vehicle_by_id(Vehicles *v, const char *id) {
-  for (size_t i = 0; i < v->len; i++) {
-    if ((strcmp(id, (&v->data[i])->id)) == 0)
-      return &v->data[i];
-  }
-  return NULL;
-}
 
 void read_vehicles(Vehicles *v) {
   FILE *fp = fopen("./v_ex.txt", "r");
