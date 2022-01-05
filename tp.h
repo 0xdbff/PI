@@ -1,6 +1,7 @@
 #ifndef __TP_H__
 #define __TP_H__
 
+#include "log.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
