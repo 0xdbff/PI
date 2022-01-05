@@ -1,10 +1,17 @@
 #include "vec.h"
 
-#define LOG_ERR(X)                                                             \
-  fprintf(stderr, "\x1B[31m[ERR] -> %d : %s\033[0m", X, strerror(X))
+#define LOG_ERRNO(ERRNO)                                                       \
+  fprintf(stderr, "\x1B[31m[ERR]\texit(%d) : %s!\n\033[0m", ERRNO,             \
+          strerror(ERRNO))
+#define LOG_ERR(STR) fprintf(stderr, "\x1B[31m[ERR]\t%s\n\033[0m", STR)
+#define LOG_ERRNO_EXIT(STR, ERRNO)                                             \
+  LOG_ERR(STR);                                                                \
+  LOG_ERRNO(ERRNO);                                                            \
+  exit(ERRNO);
 
 Orders *vec_orders_new() {
   Orders *v = (Orders *)malloc(sizeof(Orders));
+  v = NULL;
   if (v == NULL) {
     goto error;
   }
@@ -17,8 +24,7 @@ Orders *vec_orders_new() {
   return v;
 
 error:
-  LOG_ERR(12);
-  exit(12);
+  LOG_ERRNO_EXIT("Failed on memory allocation for vector, 1.536KiB", 12)
 }
 
 void vec_orders_expand(Orders *v) {
