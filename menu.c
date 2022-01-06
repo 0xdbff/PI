@@ -32,7 +32,32 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v) {
       return 0;
     }
   }
-  return 1;
+  return 1; // not found!
+}
+
+static inline uint8_t order_build_prompt(Orders *v) {
+  //
+}
+
+static inline uint8_t rm_order_by_id_prompt(Orders *v) {
+  size_t input = 0;
+  if (scanf("%lu", &input) != 1)
+    return 5; // io error
+  for (size_t i = 0; i < v->len; i++) {
+    if (input == (&v->data[i])->id) {
+      vec_orders_rm_at(v, i);
+      return 0;
+    }
+  }
+  return 1; // not found!
+}
+
+// 07
+static inline uint8_t list_vehicles(Vehicles *v) {
+  for (size_t i = 0; i < v->len; i++) {
+    printf("%s\t%s\t%f\t%u\n", (&v->data[i])->id, (&v->data[i])->type,
+           (&v->data[i])->price, (&v->data[i])->autonomy);
+  }
 }
 
 static inline void input_switch(Vehicles *v, Orders *o) {

@@ -27,14 +27,15 @@ typedef struct Order {
 #ifndef VEHICLE_ID_MAX_CHARS
 #define VEHICLE_ID_MAX_CHARS 32
 #define VEHICLE_TYPE_MAX_CHARS 48
-#endif
+#endif // VEHICLE_ID_MAX_CHARS
 
-Vehicle *vehicle_build(const char *id, const char *type, const float price,
-                       const uint32_t autonomy);
+/* Vehicle *vehicle_build(const char *id, const char *type, const float price,
+ */
+/*                        const uint32_t autonomy); */
 
-Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
-                   const uint32_t time, const uint32_t distance);
+/* Order *order_build(const size_t id, const size_t nif, Vehicle *v_id, */
+/*                    const uint32_t time, const uint32_t distance); */
 
 // bool validate_order(Order *v);
 
-#endif
+#endif // __TP_H__

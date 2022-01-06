@@ -29,7 +29,6 @@ int main(int argc, char **argv) {
   Orders *o = vec_orders_new();
 
   vec_orders_push(o, order_build(3, 4, (&v->data[0]), 0, 0));
-  fclose(fp);
   read_vehicles(v);
   printf("%lu\n", (&o->data[0])->id);
   printf("%lu\n", (&o->data[0])->nif);
