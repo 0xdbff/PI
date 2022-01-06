@@ -28,8 +28,18 @@ int main(int argc, char **argv) {
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
 
-  vec_orders_push(o, order_build(3, 4, (&v->data[0]), 0, 0));
+  FILE *fp = fopen("hi.log", "w+");
 
+  if (fp == NULL)
+    puts("F");
+  if (ferror(fp))
+    puts("F");
+
+  for (size_t i = 0; i < 10; i++)
+    fprintf(fp, L_ERR "%d : %s!" L_CRESET, 12, strerror(12));
+
+  vec_orders_push(o, order_build(3, 4, (&v->data[0]), 0, 0));
+  fclose(fp);
   read_vehicles(v);
   printf("%lu\n", (&o->data[0])->id);
   printf("%lu\n", (&o->data[0])->nif);

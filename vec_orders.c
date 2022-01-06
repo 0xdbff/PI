@@ -2,7 +2,6 @@
 
 Orders *vec_orders_new() {
   Orders *v = (Orders *)malloc(sizeof(Orders));
-  v = NULL;
   if (v == NULL) {
     goto error;
   }
@@ -15,7 +14,6 @@ Orders *vec_orders_new() {
   return v;
 
 error:
-  LOG_ERRNO(69);
   LOG_STRERR_EXIT("alooc problenns", 12)
 }
 
