@@ -34,6 +34,26 @@
 #define LC_RESET "\n\033[0m"
 #endif // log to terminal with colors
 
+#ifndef L_ERR
+#define L_ERR "|ERROR|\t"    // non fatal error reports
+#define L_WARN "|WARN |\t"   // warning messages
+#define L_INFO "|INFO |\t"   // general info reported
+#define L_CMMND "|CMMND|\t"  // commands executed in runtime
+#define L_SUCMD "|SUCMD|\t"  // as super user
+#define L_FATAL "|FATAL|\t"  // exiting errors reported
+#define L_PANIC "|PANIC|\t"  // when a log is not reported, logged latter
+#define L_DEBUG "|DEBUG|\t"  // used for development
+#define L_TEST "|TEST |\t"   // production tests
+#define L_TRACE "|TRACE|\t"  // detailed steps of an operation
+#define L_SERVER "|SERVR|\t" // server reports
+#define L_SSH "|INSSH|\t"    // secure shell logins
+#define L_USER "|USER |\t"   // user reports
+#define L_ADMIN "|ADMIN|\t"  // admin reports
+#define L_SYSTM "|SYSTM|\t"  // general system reports
+#define L_KERNEL "|KERNL|\t" // kernel reports
+#define L_RESET "\n\033[0m"
+#endif // log to file
+
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \
   fprintf(stderr, LC_ERR "%d : %s!" LC_RESET, ERRNO, strerror(ERRNO))
