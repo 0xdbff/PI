@@ -51,4 +51,5 @@ void vec_vehicles_rm_at(Vehicles *, size_t idx);
 void vec_vehicles_push_at(Vehicles *, size_t idx, Vehicle *);
 void vec_vehicles_destroy(Vehicles *);
 
+void menu(Vehicles *, Orders *);
 #endif

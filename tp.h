@@ -2,6 +2,7 @@
 #define __TP_H__
 
 #include "log.h"
+#include "vec.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -36,5 +37,4 @@ Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
 
 // bool validate_order(Order *v);
 
-void menu();
 #endif

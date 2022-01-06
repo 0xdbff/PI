@@ -2,7 +2,7 @@
 
 static inline void menu_print() {
   puts("_____________________________________________________________");
-  puts("1=> inserir um novo meio de transporte urbano.");
+  puts("1=> inserir um novo meio de de mobilidade eletrica.");
   puts("2=> remover um transporte urbano");
   puts("3=> requerir a utilizacao de um meio de transporte.");
   puts("4=> requerir a alteracao de um pedido de utilizacao em espera");
@@ -17,14 +17,34 @@ static inline void menu_print() {
        "dados anteriores prima esta opcao.");
 }
 
-static inline void input_switch() {
+static inline uint8_t vehicle_build_prompt(Vehicles *v) {
+  //
+}
+
+static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v) {
+  char *input = malloc(VEHICLE_ID_MAX_CHARS);
+  if (scanf("%s", input) != 1)
+    return 5; // io error
+  for (size_t i = 0; i < v->len; i++) {
+    if ((strcmp(input, (&v->data[i])->id)) == 0) {
+      vec_vehicles_rm_at(v, i);
+      // cancel orders with that vehicle
+      return 0;
+    }
+  }
+  return 1;
+}
+
+static inline void input_switch(Vehicles *v, Orders *o) {
   char input = '\0';
   if (scanf("%c", &input) != 1)
     goto error;
 
   switch (input) {
   case '1':
-
+    if (vehicle_build_prompt(v))
+      goto error;
+    break;
   case '2':
 
   case '3':
@@ -46,11 +66,13 @@ static inline void input_switch() {
   default:
     break;
   }
+  menu(v, o);
+
 error:
   exit(1);
 }
 
-void menu() {
+void menu(Vehicles *v, Orders *o) {
   menu_print();
-  input_switch();
+  input_switch(v, o);
 }

@@ -28,13 +28,6 @@ int main(int argc, char **argv) {
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
 
-  FILE *fp = fopen("hi.log", "w+");
-
-  if (fp == NULL)
-    puts("F");
-  if (ferror(fp))
-    puts("F");
-
   vec_orders_push(o, order_build(3, 4, (&v->data[0]), 0, 0));
   fclose(fp);
   read_vehicles(v);
@@ -47,7 +40,7 @@ int main(int argc, char **argv) {
   printf("%lu\n", sizeof(*(v->data)));
   printf("%lu\n", sizeof(*(o->data)));
 
-  menu();
+  menu(v, o);
   vec_orders_destroy(o);
   vec_vehicles_destroy(v);
 }
