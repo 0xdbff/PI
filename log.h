@@ -15,29 +15,33 @@
 #endif // _WIN32/64
 
 #ifndef LC_ERR
-#define LC_ERR "\x1B[31m|ERROR|\t"
-#define LC_WARN "|WARN |\t"
-#define LC_INFO "|INFO |\t"
-#define LC_CMMND "|CMMND|\t"
-#define LC_FATAL "|FATAL|\t"
-#define LC_PANIC "|PANIC|\t"
-#define LC_DEBUG "|DEBUG|\t"
-#define LC_TRACE "|TRACE|\t"
-#define LC_SERVER "|SERVER|\t"
-#define LC_SSH "|INSSH|\t"
-#define LC_USER "|USER |\t"
-#define LC_KERNEL "|KRNEL\t"
+#define LC_ERR "\x1B[31m|ERROR|\t" // non fatal error reports
+#define LC_WARN "|WARN |\t"        // warning messages
+#define LC_INFO "|INFO |\t"        // general info reported
+#define LC_CMMND "|CMMND|\t"       // commands executed in runtime
+#define LC_SUCMD "|SUCMD|\t"       // as super user
+#define LC_FATAL "|FATAL|\t"       // exiting errors reported
+#define LC_PANIC "|PANIC|\t"       // when a log is not reported, logged latter
+#define LC_DEBUG "|DEBUG|\t"       // used for development
+#define LC_TEST "|TEST |\t"        // production tests
+#define LC_TRACE "|TRACE|\t"       // detailed steps of an operation
+#define LC_SERVER "|SERVR|\t"      // server reports
+#define LC_SSH "|INSSH|\t"         // secure shell logins
+#define LC_USER "|USER |\t"        // user reports
+#define LC_ADMIN "|ADMIN|\t"       // admin reports
+#define LC_SYSTM "|SYSTM|\t"       // general system reports
+#define LC_KERNEL "|KERNL|\t"      // kernel reports
 #define LC_RESET "\n\033[0m"
 #endif // log to terminal with colors
 
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \
-  fprintf(stderr, L_ERR "%d : %s!" L_CRESET, ERRNO, strerror(ERRNO))
+  fprintf(stderr, LC_ERR "%d : %s!" LC_RESET, ERRNO, strerror(ERRNO))
 
-#define LOG_ERR(STR) fprintf(stderr, L_ERR "%s" L_CRESET, STR)
+#define LOG_ERR(STR) fprintf(stderr, LC_ERR "%s" LC_RESET, STR)
 
 #define LOG_ERRNO_EXIT(ERRNO)                                                  \
-  fprintf(stderr, L_ERR "exit(%d) : %s!" L_CRESET, ERRNO, strerror(ERRNO));    \
+  fprintf(stderr, LC_ERR "exit(%d) : %s!" LC_RESET, ERRNO, strerror(ERRNO));   \
   exit(ERRNO);
 
 #define LOG_STRERR_EXIT(STR, ERRNO)                                            \
