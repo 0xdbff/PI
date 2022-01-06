@@ -35,9 +35,6 @@ int main(int argc, char **argv) {
   if (ferror(fp))
     puts("F");
 
-  for (size_t i = 0; i < 10; i++)
-    fprintf(fp, L_ERR "%d : %s!" L_CRESET, 12, strerror(12));
-
   vec_orders_push(o, order_build(3, 4, (&v->data[0]), 0, 0));
   fclose(fp);
   read_vehicles(v);
