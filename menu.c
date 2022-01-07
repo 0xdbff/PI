@@ -64,9 +64,21 @@ static inline uint8_t list_vehicles(Vehicles *v) {
 static inline uint8_t list_orders(Orders *v) {
   for (size_t i = 0; i < v->len; i++) {
     printf("%lu\t%lu\t%s\t%u\t%u\n", (&v->data[i])->id, (&v->data[i])->nif,
-           (&(&v->data[i])->v_id)->id, (&v->data[i])->time,
-           (&v->data[i])->autonomy);
+           ((&v->data[i])->v_id)->id, (&v->data[i])->time,
+           (&v->data[i])->distance);
   }
+}
+
+// 09
+static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
+  size_t input = 0;
+  if (scanf("%lu", &input) != 1)
+    return 5; // io error
+  Order *o = search_order_by_id(v, input);
+  if (o == NULL) {
+    return 1; // not found
+  }
+  printf("%f", ((o->v_id)->price) * (o->time));
 }
 
 static inline void input_switch(Vehicles *v, Orders *o) {

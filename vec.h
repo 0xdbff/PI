@@ -52,4 +52,5 @@ void vec_vehicles_push_at(Vehicles *, size_t idx, Vehicle *);
 void vec_vehicles_destroy(Vehicles *);
 
 void menu(Vehicles *, Orders *);
+Order *search_order_by_id(Orders *v, const size_t id);
 #endif
