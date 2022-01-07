@@ -61,7 +61,7 @@ void vec_vehicles_destroy(Vehicles *v) {
   free(v);
 }
 
-int vec_vehicles_is_empty(Vehicles *v) {
+bool vec_vehicles_is_empty(Vehicles *v) {
   assert(v);
   return v->len == 0;
 }
