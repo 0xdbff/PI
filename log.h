@@ -14,26 +14,6 @@
 #endif // __FILENAME__
 #endif // _WIN32/64
 
-#ifndef LC_ERR
-#define LC_ERR "\x1B[31m|ERROR|\t" // non fatal error reports
-#define LC_WARN "|WARN |\t"        // warning messages
-#define LC_INFO "|INFO |\t"        // general info reported
-#define LC_CMMND "|CMMND|\t"       // commands executed in runtime
-#define LC_SUCMD "|SUCMD|\t"       // as super user
-#define LC_FATAL "|FATAL|\t"       // exiting errors reported
-#define LC_PANIC "|PANIC|\t"       // when a log is not reported, logged latter
-#define LC_DEBUG "|DEBUG|\t"       // used for development
-#define LC_TEST "|TEST |\t"        // production tests
-#define LC_TRACE "|TRACE|\t"       // detailed steps of an operation
-#define LC_SERVER "|SERVR|\t"      // server reports
-#define LC_SSH "|INSSH|\t"         // secure shell logins
-#define LC_USER "|USER |\t"        // user reports
-#define LC_ADMIN "|ADMIN|\t"       // admin reports
-#define LC_SYSTM "|SYSTM|\t"       // general system reports
-#define LC_KERNEL "|KERNL|\t"      // kernel reports
-#define LC_RESET "\n\033[0m"       // reset terminal colors
-#endif                             // log to terminal with colors
-
 #ifndef L_ERR
 #define L_ERR "|ERROR|\t"    // non fatal error reports
 #define L_WARN "|WARN |\t"   // warning messages
@@ -52,6 +32,26 @@
 #define L_SYSTM "|SYSTM|\t"  // general system reports
 #define L_KERNEL "|KERNL|\t" // kernel reports
 #endif                       // log to files
+
+#ifndef LC_ERR
+#define LC_ERR "\x1B[31m|ERROR|\t"
+#define LC_WARN "|WARN |\t"
+#define LC_INFO "|INFO |\t"
+#define LC_CMMND "|CMMND|\t"
+#define LC_SUCMD "|SUCMD|\t"
+#define LC_FATAL "|FATAL|\t"
+#define LC_PANIC "|PANIC|\t"
+#define LC_DEBUG "|DEBUG|\t"
+#define LC_TEST "|TEST |\t"
+#define LC_TRACE "|TRACE|\t"
+#define LC_SERVER "|SERVR|\t"
+#define LC_SSH "|INSSH|\t"
+#define LC_USER "|USER |\t"
+#define LC_ADMIN "|ADMIN|\t"
+#define LC_SYSTM "|SYSTM|\t"
+#define LC_KERNEL "|KERNL|\t"
+#define LC_RESET "\n\033[0m"
+#endif
 
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \

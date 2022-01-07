@@ -42,7 +42,7 @@ void vec_orders_push(Orders *v, Order *value);
 Vehicles *vec_vehicles_new();
 Vehicle *vec_vehicles_get(Vehicles *, size_t idx);
 size_t vec_vehicles_len(Vehicles *);
-int vec_vehicles_is_empty(Vehicles *);
+bool vec_vehicles_is_empty(Vehicles *);
 void vec_vehicles_expand(Vehicles *);
 void vec_vehicles_halve(Vehicles *);
 void vec_vehicles_push(Vehicles *, Vehicle *);

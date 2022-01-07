@@ -60,6 +60,15 @@ static inline uint8_t list_vehicles(Vehicles *v) {
   }
 }
 
+// 08
+static inline uint8_t list_orders(Orders *v) {
+  for (size_t i = 0; i < v->len; i++) {
+    printf("%lu\t%lu\t%s\t%u\t%u\n", (&v->data[i])->id, (&v->data[i])->nif,
+           (&(&v->data[i])->v_id)->id, (&v->data[i])->time,
+           (&v->data[i])->autonomy);
+  }
+}
+
 static inline void input_switch(Vehicles *v, Orders *o) {
   char input = '\0';
   if (scanf("%c", &input) != 1)
