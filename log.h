@@ -15,13 +15,13 @@
 #endif // _WIN32/64
 
 #ifndef L_ERR
-#define L_ERR "|ERROR|\t"    // non fatal error reports
+#define L_ERR "|ERROR|\t"    // error reports
 #define L_WARN "|WARN |\t"   // warning messages
 #define L_INFO "|INFO |\t"   // general info reported
 #define L_CMMND "|CMMND|\t"  // commands executed in runtime
 #define L_SUCMD "|SUCMD|\t"  // as super user
 #define L_FATAL "|FATAL|\t"  // exiting errors reported
-#define L_PANIC "|PANIC|\t"  // when a log is not reported, logged latter
+#define L_PANIC "|PANIC|\t"  // when a FATAL log is not reported, logged latter
 #define L_DEBUG "|DEBUG|\t"  // used for development
 #define L_TEST "|TEST |\t"   // production tests
 #define L_TRACE "|TRACE|\t"  // detailed steps of an operation

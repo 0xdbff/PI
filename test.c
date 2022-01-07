@@ -12,9 +12,9 @@ void read_vehicles(Vehicles *v) {
   char *line = NULL;
   size_t len;
   ssize_t read;
-
+  fp = NULL;
   if (ferror(fp))
-    goto error_on_file_read;
+    LOG_ERRNO(2);
 
   char *id = malloc(sizeof(char) * VEHICLE_ID_MAX_CHARS);
   char *type = malloc(sizeof(char) * VEHICLE_TYPE_MAX_CHARS);
@@ -23,7 +23,7 @@ void read_vehicles(Vehicles *v) {
 
   while ((read = getline(&line, &len, fp)) != -1) {
     if (sscanf(line, "%s %s %f %u", id, type, &price, &autonomy) != 4)
-      goto error_on_file_read;
+      LOG_ERRNO(
     vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
   }
 
@@ -32,12 +32,6 @@ void read_vehicles(Vehicles *v) {
   free(id);
   free(type);
   fclose(fp);
-
-  return;
-
-error_on_file_read:
-  perror("Ficheiro dos veiculos nao encontrado ou nao apto para leitura.");
-  exit(1);
 }
 
 void read_orders(Orders *v) {
