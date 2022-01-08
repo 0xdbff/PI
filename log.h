@@ -1,18 +1,12 @@
 #ifndef __LOG_H__
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-#if defined(_WIN32) || defined(_WIN64)
-#ifndef __FILENAME__
-#define __FILENAME__                                                           \
-  (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
-#endif // __FILENAME__
-#else
-#ifndef __FILENAME__
-#define __FILENAME__                                                           \
-  (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-#endif // __FILENAME__
-#endif // _WIN32/64
+#ifndef L_PATH
+#define L_PATH "./logs/"
+#endif // L_PATH
 
 #ifndef L_ERR
 #define L_ERR "|ERROR|\t"    // error reports
@@ -31,31 +25,33 @@
 #define L_ADMIN "|ADMIN|\t"  // admin reports
 #define L_SYSTM "|SYSTM|\t"  // general system reports
 #define L_KERNEL "|KERNL|\t" // kernel reports
-#endif                       // log to files
+#endif                       // L_ERR // log to files
 
 #ifndef LC_ERR
-#define LC_ERR "\x1B[31m|ERROR|\t"
-#define LC_WARN "|WARN |\t"
-#define LC_INFO "|INFO |\t"
-#define LC_CMMND "|CMMND|\t"
-#define LC_SUCMD "|SUCMD|\t"
-#define LC_FATAL "|FATAL|\t"
-#define LC_PANIC "|PANIC|\t"
-#define LC_DEBUG "|DEBUG|\t"
-#define LC_TEST "|TEST |\t"
-#define LC_TRACE "|TRACE|\t"
-#define LC_SERVER "|SERVR|\t"
-#define LC_SSH "|INSSH|\t"
-#define LC_USER "|USER |\t"
-#define LC_ADMIN "|ADMIN|\t"
-#define LC_SYSTM "|SYSTM|\t"
-#define LC_KERNEL "|KERNL|\t"
-#define LC_RESET "\n\033[0m"
-#endif
+#define LC_ERR "\033[91m|ERROR|\t"
+#define LC_WARN "\033[93m|WARN |\t"
+#define LC_INFO "\033[92m|INFO |\t"
+#define LC_FATAL "\033[91m|FATAL|\t"
+#define LC_RESET "\033[0m"
+#endif // LC_ERR // log to terminal
+
+static inline uint8_t log_to_file(const char *str) {
+  time_t t = time(NULL);
+  struct tm *tm = localtime(&t);
+  FILE *fp = fopen(L_PATH, "w+");
+  if (ferror(fp))
+    return 2;
+  if (fprintf(fp, "%s\n", str)) {
+    fclose(fp);
+    return 0;
+  }
+  fclose(fp);
+  return 1;
+}
 
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \
-  fprintf(stderr, LC_ERR "%d : %s!", ERRNO, strerror(ERRNO))
+  fprintf(stderr, LC_ERR "%d : %s!", ERRNO, strerror(ERRNO));
 
 #define LOG_ERR(STR) fprintf(stderr, LC_ERR "%s" LC_RESET, STR)
 
@@ -69,6 +65,7 @@
 #endif
 
 #ifndef LOG_INFO
+#define LOG_INFO puts(LC_INFO LC_RESET);
 //! TODO
 #endif
 

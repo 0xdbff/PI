@@ -12,7 +12,7 @@ void read_vehicles(Vehicles *v) {
   char *line = NULL;
   size_t len;
   ssize_t read;
-  fp = NULL;
+
   if (ferror(fp))
     LOG_ERRNO(2);
 
@@ -23,7 +23,7 @@ void read_vehicles(Vehicles *v) {
 
   while ((read = getline(&line, &len, fp)) != -1) {
     if (sscanf(line, "%s %s %f %u", id, type, &price, &autonomy) != 4)
-      LOG_ERRNO(
+      LOG_ERRNO(1);
     vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
   }
 
