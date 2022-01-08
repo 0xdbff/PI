@@ -35,23 +35,12 @@
 #define LC_RESET "\033[0m"
 #endif // LC_ERR // log to terminal
 
-static inline uint8_t log_to_file(const char *str) {
-  time_t t = time(NULL);
-  struct tm *tm = localtime(&t);
-  FILE *fp = fopen(L_PATH, "w+");
-  if (ferror(fp))
-    return 2;
-  if (fprintf(fp, "%s\n", str)) {
-    fclose(fp);
-    return 0;
-  }
-  fclose(fp);
-  return 1;
-}
+int log_to_file(const char *str);
 
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \
-  fprintf(stderr, LC_ERR "%d : %s!", ERRNO, strerror(ERRNO));
+  fprintf(stderr, LC_ERR "%d : %s!", ERRNO, strerror(ERRNO));                  \
+  log_to_file(strerror(ERRNO));
 
 #define LOG_ERR(STR) fprintf(stderr, LC_ERR "%s" LC_RESET, STR)
 
