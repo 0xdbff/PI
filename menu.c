@@ -18,7 +18,27 @@ static inline void menu_print() {
 }
 
 static inline uint8_t vehicle_build_prompt(Vehicles *v) {
-  //
+  char *id = malloc(VEHICLE_ID_MAX_CHARS);
+  char *type = malloc(VEHICLE_TYPE_MAX_CHARS);
+  float price = 0.0;
+  uint32_t autonomy = 0;
+
+  printf("insira o id: ");
+  if ((scanf("%s", id) == 0))
+    return 5;
+  printf("insira o tipo de veiculo: ");
+  if ((scanf("%s", type) == 0))
+    return 5;
+  printf("insira o preco por min: ");
+  if ((scanf("%f", &price) == 0))
+    return 5;
+  printf("insira a autonomia do veiculo: ");
+  if ((scanf("%u", &autonomy) == 0))
+    return 5;
+
+  vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
+  // LOG
+  return 0;
 }
 
 static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v) {
@@ -84,12 +104,15 @@ static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
 
 static inline void input_switch(Vehicles *v, Orders *o) {
   char input = '\0';
-  if (scanf("%c", &input) != 1)
+  uint8_t status = 0; // return values 'errno'
+  if (scanf("%c", &input) != 1) {
+    status = 5;
     goto error;
-
+  }
   switch (input) {
   case '1':
-    if (vehicle_build_prompt(v))
+    status = vehicle_build_prompt(v);
+    if (status)
       goto error;
     break;
   case '2':
@@ -116,7 +139,8 @@ static inline void input_switch(Vehicles *v, Orders *o) {
   menu(v, o);
 
 error:
-  exit(1);
+  LOG_ERRNO(status);
+  menu(v, o);
 }
 
 void menu(Vehicles *v, Orders *o) {

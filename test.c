@@ -41,7 +41,7 @@ void read_orders(Orders *v) {
   ssize_t read;
 
   if (ferror(fp))
-    goto error_on_file_read;
+    LOG_ERRNO(2);
 
   size_t id = 0;
   size_t nif = 0;
@@ -52,7 +52,7 @@ void read_orders(Orders *v) {
   while ((read = getline(&line, &len, fp)) != -1) {
     if (sscanf(line, "%lu %lu %s %u %u", &id, &nif, v_id, &time, &distance) !=
         5)
-      goto error_on_file_read;
+      LOG_ERRNO(1);
     vec_orders_push(v, order_build(id, nif, v_id, time, distance));
   }
 
@@ -60,10 +60,4 @@ void read_orders(Orders *v) {
     free(line);
   free(v_id);
   fclose(fp);
-
-  return;
-
-error_on_file_read:
-  perror("Ficheiro dos veiculos nao encontrado ou nao apto para leitura.");
-  exit(1);
 }

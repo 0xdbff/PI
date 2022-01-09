@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
-  LOG_ERRNO(2);
+  // LOG_ERRNO(2);
 
   vec_orders_push(o, order_build(3, 4, (&v->data[0]), 0, 0));
   read_vehicles(v);
