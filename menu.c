@@ -17,8 +17,8 @@ static inline void menu_print() {
        "dados anteriores prima esta opcao.");
 }
 
-static inline uint8_t vehicle_build_prompt(uint8_t run, Vehicles *v) {
-  if (run > 0) { // memory leaks will be present if bad values are given! so
+static inline uint8_t vehicle_build_prompt(uint8_t leaks, Vehicles *v) {
+  if (leaks) { // memory leaks will be present if bad values are given! so
     char *garbage = malloc(VEHICLE_TYPE_MAX_CHARS); // we have to deal with them
     scanf("%s", garbage);
     free(garbage);
@@ -31,15 +31,18 @@ static inline uint8_t vehicle_build_prompt(uint8_t run, Vehicles *v) {
   printf("insira o id: ");
   if ((scanf("%s", id) == 0))
     goto error;
+  // !TODO search for other ids to validate
   printf("insira o tipo de veiculo: ");
   if ((scanf("%s", type) == 0))
     goto error;
   printf("insira o preco por min: ");
   if ((scanf("%f", &price) == 0))
     goto error;
+  //! TODO specify a reasonable range of values
   printf("insira a autonomia do veiculo: ");
   if ((scanf("%u", &autonomy) == 0))
     goto error;
+  //! TODO specify a reasonable range of values
 
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
   // LOG
@@ -50,7 +53,7 @@ static inline uint8_t vehicle_build_prompt(uint8_t run, Vehicles *v) {
 error:
   free(id);
   free(type);
-  LOG_ERR("Valor introduzido nao validado, reintroduza!");
+  LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
   return vehicle_build_prompt(1, v);
 }
 
@@ -115,59 +118,34 @@ static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
   return 0;
 }
 
-void input_switch(uint8_t run, Vehicles *v, Orders *o) {
-  if (run > 0) { // deal with garbage values
-    char g;      // just in case
-    g = getchar();
-    puts("reintroduza uma opcao, (m)menu")
-  }
+void input_switch(Vehicles *v, Orders *o) {
   char input = '\0';
   uint8_t status = 0; // return values 'errno'
-  if (scanf("%c", &input) != 1) {
+
+  if (scanf("\n%c", &input) != 1) {
     status = 5;
     goto error;
   }
   switch (input) {
   case '1':
-    status = vehicle_build_prompt(0, v);
-    if (status)
-      goto error;
+    status = vehicle_build_prompt(0, v); // always evaluates to 0
     break;
-  case '2':
-
-  case '3':
-
-  case '4':
-
-  case '5':
-
-  case '6':
-
-  case '7':
-
-  case '8':
-
-  case '9':
-
-  case 'c':
-
   case 'm':
-    menu_print();
+    menu(v, o);
   case 'e':
     // LOG
     exit(0);
   default:
     break;
-    input_switch(1, v, o);
   }
-  input_switch(1, v, o);
+  input_switch(v, o);
+  menu(v, o);
 
 error:
   LOG_ERRNO(status);
-  menu(v, o);
 }
 
 void menu(Vehicles *v, Orders *o) {
   menu_print();
-  input_switch(0, v, o);
+  input_switch(v, o);
 }
