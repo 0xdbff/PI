@@ -71,8 +71,52 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v) {
   return 61; // no data found
 }
 
-static inline uint8_t order_build_prompt(Orders *v) {
+static inline uint8_t order_build_prompt(uint8_t leaks, Orders *v) {
+  if (leaks) { // memory leaks will be present if bad values are given! so
+    char *garbage = malloc(VEHICLE_TYPE_MAX_CHARS); // we have to deal with them
+    scanf("%s", garbage);
+    free(garbage);
+  }
+  size_t id = 0;
+  size_t nif = 0;
+  char *v_id_str = calloc(VEHICLE_ID_MAX_CHARS, sizeof(char));
+  Vehicle *v_id = NULL;
+  uint32_t time = 0;
+  uint32_t distance = 0;
+
+  printf("insira o id: ");
+  if ((scanf("%lu", &id) == 0))
+    goto error;
+  // !TODO search for other ids to validate
+
+  printf("insira o nif: ");
+  if (scanf("%lu", &nif) == 0)
+    goto error;
+
+  printf("insira o id do veiculo");
+  if (scanf("%s", v_id_str) == 0)
+    goto error;
+  //! TODO verify ID
+
+  printf("insira o tempo de uso: ");
+  if ((scanf("%u", &time) == 0))
+    goto error;
+  //! TODO specify a reasonable range of values
   //
+  printf("insira a distancia pretendida: ");
+  if ((scanf("%u", &distance) == 0))
+    goto error;
+  //! TODO specify a reasonable range of values
+
+  vec_orders_push(v, order_build(id, nif, v_id, time, distance));
+  // LOG
+  free(v_id_str);
+  return 0;
+
+error:
+  free(v_id_str);
+  LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+  return order_build_prompt(1, v);
 }
 
 static inline uint8_t rm_order_by_id_prompt(Orders *v) {
@@ -122,6 +166,7 @@ void input_switch(Vehicles *v, Orders *o) {
   char input = '\0';
   uint8_t status = 0; // return values 'errno'
 
+  printf("\n\t Opcao: ");
   if (scanf("\n%c", &input) != 1) {
     status = 5;
     goto error;
@@ -130,16 +175,38 @@ void input_switch(Vehicles *v, Orders *o) {
   case '1':
     status = vehicle_build_prompt(0, v); // always evaluates to 0
     break;
+  case '2':
+    status = order_build_prompt(0, o); // always evaluates to 0
+    break;
+  case '3':
+    break;
+  case '4':
+    break;
+  case '5':
+    break;
+  case '6':
+    break;
+  case '7':
+    break;
+  case '8':
+    break;
+  case '9':
+    break;
+
+  case 'c':
+    system("clear");
+    break;
   case 'm':
     menu(v, o);
   case 'e':
     // LOG
     exit(0);
   default:
+    puts("caracter nao reconhecido!, reinsira");
+    input_switch(v, o);
     break;
   }
   input_switch(v, o);
-  menu(v, o);
 
 error:
   LOG_ERRNO(status);
