@@ -163,14 +163,30 @@ static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
 }
 
 void input_switch(Vehicles *v, Orders *o) {
+  // 20 bytes allocated just in case the user writes more than one char and
+  // tries to crash the program or exploit it, if more than 20 chars excluding
+  // \n are typed undefined behavior wont be present, all the user gets is an
+  // Adress boundary error "SIGSEGV" 139 or mb others, security on c is hard to
+  // get right
+  char *control = calloc(20, sizeof(char));
   char input = '\0';
   uint8_t status = 0; // return values 'errno'
-
-  printf("\n\t Opcao: ");
-  if (scanf("\n%c", &input) != 1) {
+  printf("\n\t\033[94m Opcao: ");
+  if (scanf("\n%s", control) != 1) {
     status = 5;
     goto error;
   }
+  if (control[1] == '\0') {
+    puts("reached this state\n");
+    printf("%s", control);
+    input = control[0]; // used char
+  } else {
+    LOG_ERR("varios caracteres inseridos!");
+    input_switch(v, o);
+  }
+  free(control);
+
+  printf("\33[0m"); // reset blue color
   switch (input) {
   case '1':
     status = vehicle_build_prompt(0, v); // always evaluates to 0
@@ -192,9 +208,9 @@ void input_switch(Vehicles *v, Orders *o) {
     break;
   case '9':
     break;
-
   case 'c':
     system("clear");
+    menu(v, o);
     break;
   case 'm':
     menu(v, o);
