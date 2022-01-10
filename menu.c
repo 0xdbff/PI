@@ -70,8 +70,9 @@ static inline uint8_t vehicle_build_prompt(uint8_t leaks, Vehicles *v) {
   // according to google the speed of c is 299 792 458 m/s!
   // #define city smart-galaxy // let me know if size_t is nedded or mb more...
   // modifying a c compiler to allow code with 128 emulated bits per u_int would
-  // be fun!, rustlang has it as std -_-,
-  // #!/bin/bash sleep 5m && mv 5min /dev/NULL && echo "time for rustlang now"
+  // be fun!, rustlang has it as std /:
+  // #!/bin/bash su root; touch 5min; sleep 5m && mv 5min /dev/null && echo
+  // "break time is over, lets do some rust"
 
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
   // LOG
