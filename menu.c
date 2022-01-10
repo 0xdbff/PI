@@ -29,32 +29,55 @@ static inline uint8_t vehicle_build_prompt(uint8_t leaks, Vehicles *v) {
   uint32_t autonomy = 0;
 
   printf("insira o id: ");
-  if ((scanf("%s", id) == 0))
-    goto error;
-  // !TODO search for other ids to validate
+  if ((scanf("%s", id) != 1)) {
+    free(id);
+    free(type);
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    return vehicle_build_prompt(1, v);
+  }
+  // validate ! TODO verify if id exists
+
   printf("insira o tipo de veiculo: ");
-  if ((scanf("%s", type) == 0))
-    goto error;
-  printf("insira o preco por min: ");
-  if ((scanf("%f", &price) == 0))
-    goto error;
-  //! TODO specify a reasonable range of values
+  if ((scanf("%s", type) != 1)) {
+    free(id);
+    free(type);
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    return vehicle_build_prompt(1, v);
+  }
+  // validate ! TODO no rules specified
+
+  printf("insira o preco/min: ");
+  if ((scanf("%f", &price) != 1)) {
+    free(id);
+    free(type);
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    return vehicle_build_prompt(1, v);
+  }
+  // validate ! TODO >0 && <100 000$/min
+
   printf("insira a autonomia do veiculo: ");
-  if ((scanf("%u", &autonomy) == 0))
-    goto error;
-  //! TODO specify a reasonable range of values
+  if ((scanf("%u", &autonomy) != 1)) {
+    free(id);
+    free(type);
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    return vehicle_build_prompt(1, v);
+  }
+  // validate !=0, max_limit is 2**32 -1 = 4_294_967_295 are we going to mars?
+  // mb, we only need from (56Mkm to 401Mkm)*2 assuming we comeback, and the
+  // plannets are on the worst instant of their respective orbits, the worst
+  // possible calculated distance is 802M km!, our limit is 5 times that, im
+  // sure Musk will use this code! smart city, ah? what about smart galaxy?
+  // according to google the speed of c is 299 792 458 m/s!
+  // #define city smart-galaxy // let me know if size_t is nedded or mb more...
+  // modifying a c compiler to allow code with 128 emulated bits per u_int would
+  // be fun!, rustlang has it as std -_-,
+  // #!/bin/bash sleep 5m && mv 5min /dev/NULL && echo "time for rustlang now"
 
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
   // LOG
   free(id);
   free(type);
   return 0;
-
-error:
-  free(id);
-  free(type);
-  LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-  return vehicle_build_prompt(1, v);
 }
 
 static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v) {
@@ -155,9 +178,8 @@ static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
   if (scanf("%lu", &input) != 1)
     return 5;
   Order *o = search_order_by_id(v, input);
-  if (o == NULL) {
+  if (o == NULL)
     return 61;
-  }
   printf("%f", ((o->v_id)->price) * (o->time));
   return 0;
 }
@@ -166,35 +188,33 @@ void input_switch(Vehicles *v, Orders *o) {
   // 20 bytes allocated just in case the user writes more than one char and
   // tries to crash the program or exploit it, if more than 20 chars excluding
   // \n are typed undefined behavior wont be present, all the user gets is an
-  // Adress boundary error "SIGSEGV" 139 or mb others, security on c is hard to
-  // get right
-  char *control = calloc(20, sizeof(char));
+  // Adress boundary error
+  char *control = calloc(20, sizeof(char)); // all chars initialized
   char input = '\0';
   uint8_t status = 0; // return values 'errno'
   printf("\n\t\033[94m Opcao: ");
-  if (scanf("\n%s", control) != 1) {
-    status = 5;
+  if (scanf("\n%s", control) != 1) { // just in case a \n leaked from
+    status = 5;                      // previous calls
     goto error;
   }
-  if (control[1] == '\0') {
-    puts("reached this state\n");
-    printf("%s", control);
-    input = control[0]; // used char
-  } else {
+  if (control[1] == '\0') { // this garantees the user only typed one char
+    input = control[0];
+  } else { // recall funtion
     LOG_ERR("varios caracteres inseridos!");
     input_switch(v, o);
   }
-  free(control);
-
+  free(control);    // free garbage
   printf("\33[0m"); // reset blue color
+
   switch (input) {
   case '1':
     status = vehicle_build_prompt(0, v); // always evaluates to 0
     break;
   case '2':
-    status = order_build_prompt(0, o); // always evaluates to 0
+    status = rm_vehicle_by_id_prompt(v);
     break;
   case '3':
+    status = order_build_prompt(0, o); // always evaluates to 0
     break;
   case '4':
     break;
@@ -214,8 +234,9 @@ void input_switch(Vehicles *v, Orders *o) {
     break;
   case 'm':
     menu(v, o);
+    break;
   case 'e':
-    // LOG
+    // LOG EXIT
     exit(0);
   default:
     puts("caracter nao reconhecido!, reinsira");
