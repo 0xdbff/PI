@@ -17,81 +17,76 @@ static inline void menu_print() {
        "dados anteriores prima esta opcao.");
 }
 
-static inline uint8_t vehicle_build_prompt(uint8_t leaks, Vehicles *v) {
+bool vehicle_id_exists(Vehicles *v, const char *id) {
+  for (size_t i = 0; i < v->len; i++) {
+    if ((strcmp(id, (&v->data[i])->id)) == 0)
+      return true;
+  }
+  return false;
+}
+
+static inline uint8_t vehicle_build_prompt(const uint8_t leaks, Vehicles *v) {
   if (leaks) { // memory leaks will be present if bad values are given! so
     char *garbage = malloc(VEHICLE_TYPE_MAX_CHARS); // we have to deal with them
     scanf("%s", garbage);
     free(garbage);
   }
-  char *id = calloc(VEHICLE_ID_MAX_CHARS, sizeof(char));
+  // if the callocs overflow the program doesnt continue with bad values
+  char *id = calloc(VEHICLE_ID_MAX_CHARS, sizeof(char)); // initialized chars
   char *type = calloc(VEHICLE_TYPE_MAX_CHARS, sizeof(char));
   float price = 0.1;
   uint32_t autonomy = 0;
+  // err control var to avoid double checks
+  bool unvalidated = false;
 
   printf("insira o id: ");
-  if ((scanf("%s", id) != 1)) {
+  // validation: verify if id exists, and scanf(evaluates first) success
+  if ((scanf("%s", id) != 1) ||
+      (unvalidated = vehicle_id_exists(v, id)) == true) {
     free(id);
     free(type);
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-    return vehicle_build_prompt(1, v);
+    LOG_ERR("Valor introduzido nao validado, reintroduza(um id valido)!\n");
+    // control leaked memory if scanf was the point of failure
+    return unvalidated ? vehicle_build_prompt(0, v)
+                       : vehicle_build_prompt(1, 0);
   }
-  // validate ! TODO verify if id exists
-  printf("%lu\n", v->len);
-  printf("%s\n", id);
-  puts("Reached this state");
 
   printf("insira o tipo de veiculo: ");
+  // validation: scanf success
   if ((scanf("%s", type) != 1)) {
     free(id);
     free(type);
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza(valid string)!\n");
     return vehicle_build_prompt(1, v);
   }
-  printf("%s\n", type);
-  // validate ! TODO no rules specified
 
   printf("insira o preco/min: ");
-  // validate >0 && <1_000_000$/min and scanf return value
-  // for some reason if the user types x,x scanf doesnt cath an error, this
-  // algorithm avoids the corrupeted data but the next printf is still executed
-  // idk what the compiler is doing!, the value is read as x.000, the log
-  // occurs before the printf, so the if evaluated to true.
-  if ((scanf("%f", &price) != 1) || (price <= 0) || (price > 1000000)) {
+  // validation: >0 && <1_000_000$/min, and scanf success
+  // for some reason if the user types x,x or x/x scanf doesnt cath an error,
+  // the algorithm still avoids the corrupeted data, on the next if scanf fails
+  if ((scanf("%f", &price) != 1) ||
+      (unvalidated = (price <= 0) || (price > 1000000))) {
     free(id);
     free(type);
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-    // control leaked memory
-    return (price <= 0 || price > 1000000) ? vehicle_build_prompt(0, v)
-                                          : vehicle_build_prompt(1, v);
+    LOG_ERR("Valor introduzido nao validado, reintroduza(xx.xx>0 <=E6)!\n");
+    // control leaked memory if scanf was the point of failure
+    return unvalidated ? vehicle_build_prompt(0, v)
+                       : vehicle_build_prompt(1, v);
   }
-  printf("%f\n", price);
 
   printf("insira a autonomia do veiculo: ");
-  if ((scanf("%u", &autonomy) != 1)) {
+  // validation: !=0, max_limit is 2**32 -1 = 4_294_967_295 are we going to
+  // mars? as far as we know thats possible, smart city, ah?
+  if ((scanf("%u", &autonomy) != 1) || (unvalidated = autonomy == 0)) {
     free(id);
     free(type);
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-    return vehicle_build_prompt(1, v);
+    LOG_ERR("Valor introduzido nao validado, reintroduza(x>0)!\n");
+    // control leaked memory if scanf was the point of failure
+    return unvalidated ? vehicle_build_prompt(0, v)
+                       : vehicle_build_prompt(1, v);
   }
-  // validate !=0, max_limit is 2**32 -1 = 4_294_967_295 are we going to mars?
-  // mb, we only need from (56Mkm to 401Mkm)*2 assuming we comeback, and the
-  // plannets are on the worst instant of their respective orbits, the worst
-  // possible calculated distance is 802M km!, our limit is 5 times that, im
-  // sure Musk will use this code! smart city, ah? what about smart galaxy?
-  // according to google the speed of c is 299 792 458 m/s!
-  // #define city smart-galaxy // let me know if size_t is nedded or mb more...
-  // modifying a c compiler to allow code with 128 emulated bits per u_int would
-  // be fun!, rustlang has it as std /:
-  // #!/bin/bash su root; touch 5min; sleep 5m && mv 5min /dev/null && echo
-  // "break time is over, lets do some rust"
-  if (autonomy == 0) {
-    free(id);
-    free(type);
-    LOG_ERR("Valor da autonomia nao pode equivaler a 0km, reintroduza!\n");
-    return vehicle_build_prompt(1, v);
-  }
-  printf("%u\n", autonomy);
 
+  // all inputs are verified
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
   // LOG
   free(id);
