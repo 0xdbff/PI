@@ -12,14 +12,21 @@ static inline void menu_print() {
   puts("8=> calcular o custo de utilizacao da ordem requisitada");
   puts("9=> listar o plano de utilizacao de um determinado veiculo");
   puts("c=> clear");
-  puts("e=> apresentar estatisticas ate ao momento");
-  puts("s=> as operacoes sao automaticamente guardadas caso pretenda obter os "
-       "dados anteriores prima esta opcao.");
+  puts("e=> sair");
+  puts("q=> sair sem guardar");
 }
 
 bool vehicle_id_exists(Vehicles *v, const char *id) {
   for (size_t i = 0; i < v->len; i++) {
     if ((strcmp(id, (&v->data[i])->id)) == 0)
+      return true;
+  }
+  return false;
+}
+
+bool order_id_exists(Orders *v, const size_t id) {
+  for (size_t i = 0; i < v->len; i++) {
+    if (id == (&v->data[i])->id)
       return true;
   }
   return false;
@@ -31,7 +38,6 @@ static inline uint8_t vehicle_build_prompt(const uint8_t leaks, Vehicles *v) {
     scanf("%s", garbage);
     free(garbage);
   }
-  // if the callocs overflow the program doesnt continue with bad values
   char *id = calloc(VEHICLE_ID_MAX_CHARS, sizeof(char)); // initialized chars
   char *type = calloc(VEHICLE_TYPE_MAX_CHARS, sizeof(char));
   float price = 0.1;
@@ -63,12 +69,13 @@ static inline uint8_t vehicle_build_prompt(const uint8_t leaks, Vehicles *v) {
   printf("insira o preco/min: ");
   // validation: >0 && <1_000_000$/min, and scanf success
   // for some reason if the user types x,x or x/x scanf doesnt cath an error,
-  // the algorithm still avoids the corrupeted data, on the next if scanf fails
+  // the algorithm still avoids the corrupeted data, on the next call scanf
+  // fails
   if ((scanf("%f", &price) != 1) ||
       (unvalidated = (price <= 0) || (price > 1000000))) {
     free(id);
     free(type);
-    LOG_ERR("Valor introduzido nao validado, reintroduza(xx.xx>0 <=E6)!\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza(0<xx.xx<=E6)!\n");
     // control leaked memory if scanf was the point of failure
     return unvalidated ? vehicle_build_prompt(0, v)
                        : vehicle_build_prompt(1, v);
@@ -86,7 +93,7 @@ static inline uint8_t vehicle_build_prompt(const uint8_t leaks, Vehicles *v) {
                        : vehicle_build_prompt(1, v);
   }
 
-  // all inputs are verified
+  // all inputs are verified at this point
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
   // LOG
   free(id);
@@ -108,7 +115,8 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v) {
   return 61; // no data found
 }
 
-static inline uint8_t order_build_prompt(uint8_t leaks, Orders *v) {
+static inline uint8_t order_build_prompt(const uint8_t leaks, Orders *o,
+                                         Vehicles *v) {
   if (leaks) { // memory leaks will be present if bad values are given! so
     char *garbage = malloc(VEHICLE_TYPE_MAX_CHARS); // we have to deal with them
     scanf("%s", garbage);
@@ -120,40 +128,55 @@ static inline uint8_t order_build_prompt(uint8_t leaks, Orders *v) {
   Vehicle *v_id = NULL;
   uint32_t time = 0;
   uint32_t distance = 0;
-
-  printf("insira o id: ");
-  if ((scanf("%lu", &id) == 0))
-    goto error;
-  // !TODO search for other ids to validate
+  // err leaked memmory control var to avoid double checks
+  bool unvalidated = false;
 
   printf("insira o nif: ");
-  if (scanf("%lu", &nif) == 0)
-    goto error;
+  // validation: at least 8 digits
+  if ((scanf("%lu", &nif) != 1) ||
+      (unvalidated = (nif == 0 || nif < 10000000))) {
+    free(v_id_str);
+    LOG_ERR("Valor introduzido nao validado, reintroduza(8+digits)!\n");
+    // control leaked memory if scanf was the point of failure
+    return unvalidated ? order_build_prompt(0, o, v)
+                       : order_build_prompt(1, o, v);
+  }
 
-  printf("insira o id do veiculo");
-  if (scanf("%s", v_id_str) == 0)
-    goto error;
-  //! TODO verify ID
+  printf("insira o id do veiculo: ");
+  // validation: vehicle needs to exist
+  if ((unvalidated = scanf("%s", v_id_str) != 1) ||
+      (v_id = search_vehicle_by_id(v, v_id_str)) == NULL) {
+    free(v_id_str);
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    // control leaked memory if scanf was the point of failure
+    return unvalidated ? order_build_prompt(1, o, v)
+                       : order_build_prompt(0, o, v);
+  }
 
   printf("insira o tempo de uso: ");
-  if ((scanf("%u", &time) == 0))
-    goto error;
-  //! TODO specify a reasonable range of values
-  //
-  printf("insira a distancia pretendida: ");
-  if ((scanf("%u", &distance) == 0))
-    goto error;
-  //! TODO specify a reasonable range of values
+  // validation: time >0 <E6 //2years ?
+  if ((scanf("%u", &time) != 1) ||
+      (unvalidated = (time <= 0 || time > 1000000))) {
+    free(v_id_str);
+    LOG_ERR("Valor introduzido nao validado, reintroduza(0<x<=E6)!\n");
+    return unvalidated ? order_build_prompt(0, o, v)
+                       : order_build_prompt(1, o, v);
+  }
 
-  vec_orders_push(v, order_build(id, nif, v_id, time, distance));
+  // validation: time >0 <E4
+  printf("insira a distancia pretendida: ");
+  if ((scanf("%u", &distance) != 1) ||
+      (unvalidated = (distance <= 0 || distance > 10000))) {
+    free(v_id_str);
+    LOG_ERR("Valor introduzido nao validado, reintroduza(0<x<=E4)!\n");
+    return unvalidated ? order_build_prompt(0, o, v)
+                       : order_build_prompt(1, o, v);
+  }
+
+  vec_orders_push(v, order_build((v->len)++, nif, v_id, time, distance));
   // LOG
   free(v_id_str);
   return 0;
-
-error:
-  free(v_id_str);
-  LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-  return order_build_prompt(1, v);
 }
 
 static inline uint8_t rm_order_by_id_prompt(Orders *v) {
@@ -216,7 +239,7 @@ void input_switch(Vehicles *v, Orders *o) {
   if (control[1] == '\0') { // this garantees the user only typed one char
     input = control[0];
   } else { // recall funtion
-    LOG_ERR("varios caracteres inseridos!");
+    LOG_ERR("varios caracteres inseridos!\n");
     input_switch(v, o);
   }
   free(control);    // free garbage
@@ -230,7 +253,7 @@ void input_switch(Vehicles *v, Orders *o) {
     status = rm_vehicle_by_id_prompt(v);
     break;
   case '3':
-    status = order_build_prompt(0, o); // always evaluates to 0
+    status = order_build_prompt(0, o, v); // always evaluates to 0
     break;
   case '4':
     break;
@@ -252,6 +275,9 @@ void input_switch(Vehicles *v, Orders *o) {
     menu(v, o);
     break;
   case 'e':
+    // LOG EXIT
+    exit(0);
+  case 'q':
     // LOG EXIT
     exit(0);
   default:

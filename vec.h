@@ -53,4 +53,5 @@ void vec_vehicles_destroy(Vehicles *);
 
 void menu(Vehicles *, Orders *);
 Order *search_order_by_id(Orders *v, const size_t id);
+Vehicle *search_vehicle_by_id(Vehicles *v, const char *id);
 #endif
