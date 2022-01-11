@@ -33,15 +33,15 @@ static inline int search_vehicle_by_type(Vehicles *v, const char *type,
   return -1;
 }
 
-bool validate_order(Vehicles *v, Orders *o, const Vehicle *v_id,
-                    const uint32_t distance) {
+Vehicle *validate_order(Vehicles *v, Orders *o, Vehicle *v_id,
+                        const uint32_t distance) {
   uint32_t distance_needed = distance;
   for (size_t i = 0; i < o->len; i++) {
     if (v_id == (&o->data[i])->v_id)
       distance_needed += (&o->data[i])->distance;
   }
   if (v_id->autonomy >= distance_needed)
-    return true;
+    return v_id;
   // try find another vehicle with the same type
   for (int idx = 0; idx == -1;
        idx = search_vehicle_by_type(v, v_id->type, idx--)) {
@@ -53,7 +53,7 @@ bool validate_order(Vehicles *v, Orders *o, const Vehicle *v_id,
         distance_needed += (&o->data[i])->distance;
     }
     if (v_id->autonomy >= distance_needed)
-      return true;
+      return (&v->data[idx]);
   }
-  return false;
+  return NULL;
 }

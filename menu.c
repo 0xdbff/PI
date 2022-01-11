@@ -127,6 +127,7 @@ static inline uint8_t order_build_prompt(const uint8_t leaks, Orders *o,
   size_t nif = 0;
   char *v_id_str = malloc(VEHICLE_ID_MAX_CHARS);
   Vehicle *v_id = NULL;
+  Vehicle *validated = NULL;
   uint32_t time = 0;
   uint32_t distance = 0;
   // err leaked memmory control var to avoid double checks
@@ -176,14 +177,19 @@ static inline uint8_t order_build_prompt(const uint8_t leaks, Orders *o,
                        : order_build_prompt(1, o, v);
   }
 
-  free(v_id_str);
-  if (validate_order(v, o, v_id, distance)) {
-    vec_orders_push(o, order_build((v->len)++, nif, v_id, time, distance));
-    puts("added");
-    return 0;
+  /* free(v_id_str); */
+  // vehicle validate
+  if (validated validate_order(v, o, v_id, distance) == v_id) {
+    vec_orders_push(o, order_build((o->len)++, nif, v_id, time, distance));
+    puts("added is the same");
   }
-  puts("n added");
-  return 1;
+  if (v_id ==)
+    vec_orders_push(o, order_build((o->len)++, nif, v_id, time, distance));
+  puts("added");
+  return 0;
+}
+puts("n added");
+return 1;
 }
 
 static inline uint8_t rm_order_by_id_prompt(Orders *v) {
