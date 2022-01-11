@@ -25,7 +25,7 @@ static inline uint8_t vehicle_build_prompt(uint8_t leaks, Vehicles *v) {
   }
   char *id = calloc(VEHICLE_ID_MAX_CHARS, sizeof(char));
   char *type = calloc(VEHICLE_TYPE_MAX_CHARS, sizeof(char));
-  float price = 0.0;
+  float price = 0.1;
   uint32_t autonomy = 0;
 
   printf("insira o id: ");
@@ -36,6 +36,9 @@ static inline uint8_t vehicle_build_prompt(uint8_t leaks, Vehicles *v) {
     return vehicle_build_prompt(1, v);
   }
   // validate ! TODO verify if id exists
+  printf("%lu\n", v->len);
+  printf("%s\n", id);
+  puts("Reached this state");
 
   printf("insira o tipo de veiculo: ");
   if ((scanf("%s", type) != 1)) {
@@ -44,16 +47,24 @@ static inline uint8_t vehicle_build_prompt(uint8_t leaks, Vehicles *v) {
     LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
     return vehicle_build_prompt(1, v);
   }
+  printf("%s\n", type);
   // validate ! TODO no rules specified
 
   printf("insira o preco/min: ");
-  if ((scanf("%f", &price) != 1)) {
+  // validate >0 && <1_000_000$/min and scanf return value
+  // for some reason if the user types x,x scanf doesnt cath an error, this
+  // algorithm avoids the corrupeted data but the next printf is still executed
+  // idk what the compiler is doing!, the value is read as x.000, the log
+  // occurs before the printf, so the if evaluated to true.
+  if ((scanf("%f", &price) != 1) || (price <= 0) || (price > 1000000)) {
     free(id);
     free(type);
     LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-    return vehicle_build_prompt(1, v);
+    // control leaked memory
+    return (price <= 0 || price > 1000000) ? vehicle_build_prompt(0, v)
+                                          : vehicle_build_prompt(1, v);
   }
-  // validate ! TODO >0 && <100 000$/min
+  printf("%f\n", price);
 
   printf("insira a autonomia do veiculo: ");
   if ((scanf("%u", &autonomy) != 1)) {
@@ -73,6 +84,13 @@ static inline uint8_t vehicle_build_prompt(uint8_t leaks, Vehicles *v) {
   // be fun!, rustlang has it as std /:
   // #!/bin/bash su root; touch 5min; sleep 5m && mv 5min /dev/null && echo
   // "break time is over, lets do some rust"
+  if (autonomy == 0) {
+    free(id);
+    free(type);
+    LOG_ERR("Valor da autonomia nao pode equivaler a 0km, reintroduza!\n");
+    return vehicle_build_prompt(1, v);
+  }
+  printf("%u\n", autonomy);
 
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
   // LOG
@@ -162,6 +180,7 @@ static inline uint8_t list_vehicles(Vehicles *v) {
     printf("%s\t%s\t%f\t%u\n", (&v->data[i])->id, (&v->data[i])->type,
            (&v->data[i])->price, (&v->data[i])->autonomy);
   }
+  return 0;
 }
 
 // 08
@@ -171,6 +190,7 @@ static inline uint8_t list_orders(Orders *v) {
            ((&v->data[i])->v_id)->id, (&v->data[i])->time,
            (&v->data[i])->distance);
   }
+  return 0;
 }
 
 // 09
