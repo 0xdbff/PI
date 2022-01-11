@@ -159,6 +159,7 @@ static inline uint8_t order_build_prompt(const uint8_t leaks, Orders *o,
       (unvalidated = (time <= 0 || time > 1000000))) {
     free(v_id_str);
     LOG_ERR("Valor introduzido nao validado, reintroduza(0<x<=E6)!\n");
+    // control leaked memory if scanf was the point of failure
     return unvalidated ? order_build_prompt(0, o, v)
                        : order_build_prompt(1, o, v);
   }
@@ -169,11 +170,12 @@ static inline uint8_t order_build_prompt(const uint8_t leaks, Orders *o,
       (unvalidated = (distance <= 0 || distance > 10000))) {
     free(v_id_str);
     LOG_ERR("Valor introduzido nao validado, reintroduza(0<x<=E4)!\n");
+    // control leaked memory if scanf was the point of failure
     return unvalidated ? order_build_prompt(0, o, v)
                        : order_build_prompt(1, o, v);
   }
 
-  vec_orders_push(v, order_build((v->len)++, nif, v_id, time, distance));
+  vec_orders_push(o, order_build((v->len)++, nif, v_id, time, distance));
   // LOG
   free(v_id_str);
   return 0;
