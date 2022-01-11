@@ -38,8 +38,10 @@ static inline uint8_t vehicle_build_prompt(const uint8_t leaks, Vehicles *v) {
     scanf("%s", garbage);
     free(garbage);
   }
-  char *id = calloc(VEHICLE_ID_MAX_CHARS, sizeof(char)); // initialized chars
-  char *type = calloc(VEHICLE_TYPE_MAX_CHARS, sizeof(char));
+  // malloc is more suitable than calloc, string will be copied only with the
+  // initialized chars, and has less cpu iterations
+  char *id = malloc(VEHICLE_ID_MAX_CHARS);
+  char *type = malloc(VEHICLE_TYPE_MAX_CHARS);
   float price = 0.1;
   uint32_t autonomy = 0;
   // err control var to avoid double checks
@@ -122,9 +124,8 @@ static inline uint8_t order_build_prompt(const uint8_t leaks, Orders *o,
     scanf("%s", garbage);
     free(garbage);
   }
-  size_t id = 0;
   size_t nif = 0;
-  char *v_id_str = calloc(VEHICLE_ID_MAX_CHARS, sizeof(char));
+  char *v_id_str = malloc(VEHICLE_ID_MAX_CHARS);
   Vehicle *v_id = NULL;
   uint32_t time = 0;
   uint32_t distance = 0;
@@ -175,10 +176,14 @@ static inline uint8_t order_build_prompt(const uint8_t leaks, Orders *o,
                        : order_build_prompt(1, o, v);
   }
 
-  vec_orders_push(o, order_build((v->len)++, nif, v_id, time, distance));
-  // LOG
   free(v_id_str);
-  return 0;
+  if (validate_order(v, o, v_id, distance)) {
+    vec_orders_push(o, order_build((v->len)++, nif, v_id, time, distance));
+    puts("added");
+    return 0;
+  }
+  puts("n added");
+  return 1;
 }
 
 static inline uint8_t rm_order_by_id_prompt(Orders *v) {
@@ -236,7 +241,6 @@ void input_switch(Vehicles *v, Orders *o) {
   printf("\n\t\033[94m Opcao: ");
   if (scanf("\n%s", control) != 1) { // just in case a \n leaked from
     status = 5;                      // previous calls
-    goto error;
   }
   if (control[1] == '\0') { // this garantees the user only typed one char
     input = control[0];
@@ -278,19 +282,16 @@ void input_switch(Vehicles *v, Orders *o) {
     break;
   case 'e':
     // LOG EXIT
-    exit(0);
+    return;
   case 'q':
     // LOG EXIT
-    exit(0);
+    return;
   default:
     puts("caracter nao reconhecido!, reinsira");
     input_switch(v, o);
     break;
   }
   input_switch(v, o);
-
-error:
-  LOG_ERRNO(status);
 }
 
 void menu(Vehicles *v, Orders *o) {

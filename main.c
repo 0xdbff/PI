@@ -27,19 +27,10 @@ int main(int argc, char **argv) {
 
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
-  // LOG_ERRNO(2);
 
-  vec_orders_push(o, order_build(3, 4, (&v->data[0]), 0, 0));
   read_vehicles(v);
-  printf("%lu\n", (&o->data[0])->id);
-  printf("%lu\n", (&o->data[0])->nif);
-  printf("%p\n", (void *)(&o->data[0])->v_id);
-  printf("%u\n", (&o->data[0])->time);
-  printf("%u\n", (&o->data[0])->distance);
-  printf("%lu\n", sizeof((&v->data[2])->id));
-  printf("%lu\n", sizeof(*(v->data)));
-  printf("%lu\n", sizeof(*(o->data)));
   menu(v, o);
+
   vec_orders_destroy(o);
   vec_vehicles_destroy(v);
 }

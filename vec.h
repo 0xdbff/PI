@@ -54,4 +54,6 @@ void vec_vehicles_destroy(Vehicles *);
 void menu(Vehicles *, Orders *);
 Order *search_order_by_id(Orders *v, const size_t id);
 Vehicle *search_vehicle_by_id(Vehicles *v, const char *id);
+bool validate_order(Vehicles *v, Orders *o, const Vehicle *v_id,
+                    const uint32_t distance);
 #endif
