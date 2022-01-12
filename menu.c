@@ -16,30 +16,14 @@ static inline void menu_print() {
   puts("q=> sair sem guardar");
 }
 
-bool vehicle_id_exists(Vehicles *v, const char *id) {
-  for (size_t i = 0; i < v->len; i++) {
-    if ((strcmp(id, (&v->data[i])->id)) == 0)
-      return true;
-  }
-  return false;
-}
-
-bool order_id_exists(Orders *v, const size_t id) {
-  for (size_t i = 0; i < v->len; i++) {
-    if (id == (&v->data[i])->id)
-      return true;
-  }
-  return false;
-}
-
 static inline uint8_t vehicle_build_prompt(const uint8_t leaks, Vehicles *v) {
   if (leaks) { // memory leaks will be present if bad values are given! so
     char *garbage = malloc(VEHICLE_TYPE_MAX_CHARS); // we have to deal with them
     scanf("%s", garbage);
     free(garbage);
   }
-  // malloc is more suitable than calloc, string will be copied only with the
-  // initialized chars, and has less cpu iterations
+  // malloc is more suitable than calloc, string will latter be copied only with
+  // the initialized chars, and has less cpu iterations
   char *id = malloc(VEHICLE_ID_MAX_CHARS);
   char *type = malloc(VEHICLE_TYPE_MAX_CHARS);
   float price = 0.1;
@@ -177,19 +161,10 @@ static inline uint8_t order_build_prompt(const uint8_t leaks, Orders *o,
                        : order_build_prompt(1, o, v);
   }
 
-  /* free(v_id_str); */
-  // vehicle validate
-  if (validated validate_order(v, o, v_id, distance) == v_id) {
-    vec_orders_push(o, order_build((o->len)++, nif, v_id, time, distance));
-    puts("added is the same");
-  }
-  if (v_id ==)
-    vec_orders_push(o, order_build((o->len)++, nif, v_id, time, distance));
-  puts("added");
+  // if v_id
+  validated = validate_order(v, o, v_id, distance) == v_id;
+  vec_orders_push(o, order_build((o->len)++, nif, v_id, time, distance));
   return 0;
-}
-puts("n added");
-return 1;
 }
 
 static inline uint8_t rm_order_by_id_prompt(Orders *v) {
