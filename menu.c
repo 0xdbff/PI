@@ -15,7 +15,6 @@ static inline void menu_print() {
   puts("e=> sair");
   puts("q=> sair sem guardar");
 }
-
 static inline uint8_t vehicle_build_prompt(const uint8_t leaks, Vehicles *v) {
   if (leaks) { // memory leaks will be present if bad values are given! so
     char *garbage = malloc(VEHICLE_TYPE_MAX_CHARS); // we have to deal with them
@@ -162,7 +161,7 @@ static inline uint8_t order_build_prompt(const uint8_t leaks, Orders *o,
   }
 
   // if v_id
-  validated = validate_order(v, o, v_id, distance) == v_id;
+  // validated = validate_order(v, o, v_id, distance) == v_id;
   vec_orders_push(o, order_build((o->len)++, nif, v_id, time, distance));
   return 0;
 }
