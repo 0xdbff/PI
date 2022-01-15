@@ -12,10 +12,11 @@
 // grows some areas are not meant to be accessable from others.
 
 // validation by struct field for readability, allocating all this funtions
-// comes with some runtime cost, so thats why we havent used some of them, since
-// the project isn't really safe.
+// comes with some runtime cost, so thats why we havent used some of them.
 
-size_t assign_oid(Orders *v) { return (v->len)++; }
+size_t assign_oid(Orders *v) {
+  // return (v->len)++; // v->len is variable so...
+}
 
 bool vehicle_id_exists(Vehicles *v, const char *id) {
   for (size_t i = 0; i < v->len; i++) {

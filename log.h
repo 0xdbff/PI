@@ -1,4 +1,5 @@
 #ifndef __LOG_H__
+#define __LOG_H__
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +8,12 @@
 #ifndef L_PATH
 #define L_PATH "./logs/"
 #endif // L_PATH
+
+typedef struct Log {
+  FILE *fp; // we want the file opened while the program is running.
+  struct tm *
+      time; // always allocating time info in funtion stacks also not efficient.
+} Log;
 
 #ifndef L_ERR
 #define L_ERR "|ERROR|\t"    // error reports
@@ -42,7 +49,10 @@ int log_to_file(const char *str);
   fprintf(stderr, LC_ERR "%d : %s!", ERRNO, strerror(ERRNO));                  \
   log_to_file(strerror(ERRNO));
 
+// doesn't log to file
 #define LOG_ERR(STR) fprintf(stderr, LC_ERR "%s" LC_RESET, STR)
+
+#define LOGF_ERR(STR) fprintf(stderr, LC_ERR "%s" LC_RESET, STR)
 
 #define LOG_ERRNO_EXIT(ERRNO)                                                  \
   fprintf(stderr, LC_ERR "exit(%d) : %s!" LC_RESET, ERRNO, strerror(ERRNO));   \
@@ -54,7 +64,7 @@ int log_to_file(const char *str);
 #endif
 
 #ifndef LOG_INFO
-#define LOG_INFO puts(LC_INFO LC_RESET);
+#define LOG_INFO(STR) puts(LC_INFO "%s" LC_RESET, STR);
 //! TODO
 #endif
 

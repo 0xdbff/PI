@@ -82,6 +82,15 @@ static inline uint8_t vehicle_build_prompt(Vehicles *v) {
   return 0;
 }
 
+static inline void cancel_vehicle_plan(Vehicle *v_id, Orders *v) {
+  for (size_t i = 0; i < v->len; i++) {
+    if (v_id == (&v->data[i])->v_id) {
+      vec_orders_rm_at(v, i);
+      i -= 1; // now data[i] has other order, so we have to check this
+    }         // index again, v->len was updated
+  }
+}
+
 static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v) {
   char *input = malloc(VEHICLE_ID_MAX_CHARS);
   if (scanf("%s", input) != 1)
@@ -89,7 +98,6 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v) {
   for (size_t i = 0; i < v->len; i++) {
     if ((strcmp(input, (&v->data[i])->id)) == 0) {
       vec_vehicles_rm_at(v, i);
-      // cancel orders with that vehicle
       return 0;
     }
   }
