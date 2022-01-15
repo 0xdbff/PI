@@ -12,7 +12,8 @@
 // grows some areas are not meant to be accessable from others.
 
 // validation by struct field for readability, allocating all this funtions
-// comes with some runtime cost.
+// comes with some runtime cost, so thats why we havent used some of them, since
+// the project isn't really safe.
 
 size_t assign_oid(Orders *v) { return (v->len)++; }
 
@@ -32,25 +33,25 @@ bool order_id_exists(Orders *v, const size_t id) {
   return false;
 }
 
-uint8_t validate_v_price(float *price) {
+uint8_t validate_price(float *price) {
   return (*price > 0) && (*price < 1000000) ? 1 : 0;
 }
 
-uint8_t validate_v_autonomy(uint32_t *autonomy) {
+uint8_t validate_autonomy(uint32_t *autonomy) {
   return (*autonomy != 0 && *autonomy <= 10000) ? 1 : 0;
 }
 
-uint8_t validate_o_nif(size_t *nif) { return (*nif >= 10000000) ? 1 : 0; }
+uint8_t validate_nif(size_t *nif) { return (*nif >= 10000000) ? 1 : 0; }
 
-uint8_t validate_o_time(uint32_t *time) {
+uint8_t validate_time(uint32_t *time) {
   return (*time <= 10000 && *time != 0) ? 1 : 0;
 }
 
-uint8_t validate_o_distance(uint32_t *distance) {
+uint8_t validate_distance(uint32_t *distance) {
   return (*distance <= 10000 && *distance != 0) ? 1 : 0;
 }
 
-static inline size_t calculate_dst_v(Vehicle *v_id, Orders *o) {
+static inline size_t calculate_dst(Vehicle *v_id, Orders *o) {
   size_t distance_needed = 0;
   for (size_t i = 0; i < o->len; i++) {
     if (v_id == (&o->data[i])->v_id)
@@ -73,7 +74,7 @@ static inline Vehicle *search_vehicle_by_type(Vehicles *v, const char *type,
 Vehicle *assign_vid(Vehicles *v, Orders *o, Vehicle *v_id,
                     const uint32_t distance) {
   uint32_t distance_needed = distance;
-  if ((distance_needed += calculate_dst_v(v_id, o)) <= v_id->autonomy)
+  if ((distance_needed += calculate_dst(v_id, o)) <= v_id->autonomy)
     return v_id;
   // try find another vehicle with the same type
   Vehicle *temp = v_id;
@@ -82,7 +83,7 @@ Vehicle *assign_vid(Vehicles *v, Orders *o, Vehicle *v_id,
     if (temp == v_id) // dont check the same vehicle
       continue;
     distance_needed = distance; // reset variable
-    if ((distance_needed += calculate_dst_v(v_id, o)) <= v_id->autonomy)
+    if ((distance_needed += calculate_dst(v_id, o)) <= v_id->autonomy)
       return v_id;
   }
   return NULL;

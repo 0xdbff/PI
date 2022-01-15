@@ -23,7 +23,7 @@ Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
   return o;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, const char **argv) {
 
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
