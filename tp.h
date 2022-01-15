@@ -15,6 +15,7 @@ typedef struct Vehicle {
   char *type;
   float price;
   uint32_t autonomy;
+  bool active; // control associated orders when removing, 1 important byte!
 } Vehicle;
 
 typedef struct Order {

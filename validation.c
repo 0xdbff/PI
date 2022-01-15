@@ -1,21 +1,22 @@
 #include "validation.h"
 
-// static definitions hide the validation proccess from other libs, the program
-// is insecure since pointers are given with memory that's not read
+// static definitions could hide the validation proccess from other libs, the
+// program is insecure since pointers are given with memory that's not read
 // only, so "full" control is granted, thats why these definitions are extern
-// "public", data validation definitions should be visible only to this file
-// in a more secure environment and data modification would be statically called
-// here, given pointers to other libs should point only to allocated temporary
-// structs, not all the data the program has, if thats nedded then the const
-// modifier would have to be considered in some places to avoid security issues.
-// clones and read only memory managed at some degree of control, as the project
-// grows some areas are not meant to be accessable from others.
+// "public", data validation should be managed differently in a more secure
+// environment, data modification would be statically called here, given
+// pointers to other libs should point only to allocated temporary structs, not
+// all the data the program has, if thats nedded then the const modifier would
+// have to be considered in some places to avoid security issues. clones and
+// read only memory managed at some degree of control, as the project grows some
+// areas are not meant to be accessable from others.
 
 // validation by struct field for readability, allocating all this funtions
 // comes with some runtime cost, so thats why we havent used some of them.
 
 size_t assign_oid(Orders *v) {
-  // return (v->len)++; // v->len is variable so...
+  // return (v->len)++; // v->len is dynamic so..., this doesn't work at all
+  // so we have to loop through the vec and find the biggest value
 }
 
 bool vehicle_id_exists(Vehicles *v, const char *id) {

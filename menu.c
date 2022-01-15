@@ -1,7 +1,7 @@
 #include "validation.h"
 #include "vec.h"
 
-static inline void menu_print() {
+static void menu_print() {
   puts("_____________________________________________________________");
   puts("1=> inserir um novo meio de de mobilidade eletrica.");
   puts("2=> remover um transporte urbano");
@@ -17,6 +17,96 @@ static inline void menu_print() {
   puts("q=> sair sem guardar");
 }
 
+static inline uint8_t prompt_vid(Vehicles *v, char *input) {
+  printf("insira o tipo de veiculo: ");
+  while ((fgets(input, VEHICLE_ID_MAX_CHARS, stdin) == NULL)) {
+    clean_stdin(); // fflush(stdin) is bad practice;
+    LOG_ERR("Valor introduzido nao validado, reintroduza\n");
+  }
+  // VERIFY!: does not exist
+  if (vehicle_id_exists(v, input) == true) {
+    return 1;
+  }
+  return 0;
+}
+
+static inline uint8_t prompt_vid_uv(Vehicles *v, char *input) {
+  printf("insira o tipo de veiculo: ");
+  while ((fgets(input, VEHICLE_ID_MAX_CHARS, stdin) == NULL)) {
+    clean_stdin(); // fflush(stdin) is bad practice;
+    LOG_ERR("Valor introduzido nao validado, reintroduza\n");
+  }
+}
+
+static inline void prompt_type(char *input) {
+  printf("insira o tipo de veiculo: ");
+  while ((fgets(input, VEHICLE_TYPE_MAX_CHARS, stdin) == NULL)) {
+    clean_stdin();
+    LOG_ERR("Valor introduzido nao validado, reintroduza\n");
+  }
+}
+
+static inline void prompt_price(float *input) {
+  printf("insira o preco/min: ");
+  while (scanf("%f", input) != 1) {
+    clean_stdin();
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    printf("insira o preco/min: ");
+  }
+  if ((*input <= 0) || (*input > 1000000)) {
+    puts("Inserido um valor igual 0 ou maior que E6!");
+    prompt_price(input);
+  }
+}
+
+static inline void prompt_autonomy(uint32_t *input) {
+  printf("insira a autonomia do veiculo: ");
+  while (scanf("%u", input) != 1) {
+    clean_stdin();
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+  }
+  if ((*input == 0) || (*input > 10000)) {
+    puts("Inserido um valor igual a 0 ou maior que E4!");
+    prompt_autonomy(input);
+  }
+}
+
+static inline void prompt_nif(size_t *input) {
+  printf("insira o nif: ");
+  while (scanf("%lu", input) != 1) {
+    clean_stdin();
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+  }
+  if ((*input < 10000000)) {
+    puts("Inserido um nif invalido!");
+    prompt_autonomy(input);
+  }
+}
+
+static inline void prompt_time(uint32_t *input) {
+  printf("insira o tempo de uso: ");
+  while (scanf("%u", input) != 1) {
+    clean_stdin();
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+  }
+  if ((*input == 0) || (*input > 10000)) {
+    puts("Inserido um valor igual a 0 ou maior que E4!");
+    prompt_autonomy(input);
+  }
+}
+
+static inline void prompt_distance(uint32_t *input) {
+  printf("insira a distancia: ");
+  while (scanf("%u", input) != 1) {
+    clean_stdin();
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+  }
+  if ((*input == 0) || (*input > 10000)) {
+    puts("Inserido um valor igual a 0 ou maior que E4!");
+    prompt_autonomy(input);
+  }
+}
+
 static inline uint8_t vehicle_build_prompt(Vehicles *v) {
   // malloc is more suitable than calloc, string be copied latter with
   // initialized chars only, and has less cpu iterations.
@@ -24,55 +114,16 @@ static inline uint8_t vehicle_build_prompt(Vehicles *v) {
   char *type = malloc(VEHICLE_TYPE_MAX_CHARS);
   float price = 0.1;
   uint32_t autonomy = 0;
-  // err control var to avoid double checks
-  bool invalidated = false;
 
-  printf("insira o id: ");
-  // validation: verify if id exists, and scanf(evaluates first) success
-  while ((scanf("%s", id) != 1) ||
-         (invalidated = vehicle_id_exists(v, id)) == true) {
-    if (invalidated) {
-      puts("Id ja existe!");
-      free(id);
-      free(type);
-      return 0;
-    }
-    clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza\n");
+  if (prompt_vid(v, id)) {
+    puts("Id ja existe!");
+    free(id);
+    free(type);
+    return 1;
   }
-
-  printf("insira o tipo de veiculo: ");
-  while ((scanf("%s", type) != 1)) {
-    clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza(valid string)!\n");
-    printf("insira o tipo de veiculo: ");
-  }
-
-  printf("insira o preco/min: ");
-  // for some reason if the user types x,x or x/x scanf doesnt cath an error,
-  // it reads the first char only, on the next call scanf fails
-  while ((scanf("%f", &price) != 1) ||
-         (invalidated = (price <= 0) || (price > 1000000))) {
-    if (invalidated) {
-      puts("Inserido um valor maior que 0 e menor que E6!");
-      printf("reinsira o preco/min: ");
-      continue;
-    }
-    clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-    printf("reinsira o preco/min: ");
-  }
-
-  printf("insira a autonomia do veiculo: ");
-  while ((scanf("%u", &autonomy) != 1) || (invalidated = autonomy == 0)) {
-    if (invalidated) {
-      puts("Inserido um valor maior que 0 e menor que E6!");
-      printf("reinsira a autonomia do veiculo: ");
-      continue;
-    }
-    clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-  }
+  prompt_type(type);
+  prompt_price(&price);
+  prompt_autonomy(&autonomy);
 
   // all inputs are verified at this point
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
@@ -91,16 +142,22 @@ static inline void cancel_vehicle_plan(Vehicle *v_id, Orders *v) {
   }
 }
 
-static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v) {
+static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v, Orders *o) {
   char *input = malloc(VEHICLE_ID_MAX_CHARS);
-  if (scanf("%s", input) != 1)
+  if (scanf("%s", input) != 1) {
+    free(input);
     return 5; // io error
+  }
   for (size_t i = 0; i < v->len; i++) {
     if ((strcmp(input, (&v->data[i])->id)) == 0) {
+      // search for orders that need to be canceled
+      cancel_vehicle_plan(&v->data[i], o);
       vec_vehicles_rm_at(v, i);
+      free(input);
       return 0;
     }
   }
+  free(input);
   return 61; // no data found
 }
 
@@ -110,59 +167,10 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
   Vehicle *v_id = NULL;
   uint32_t time = 0;
   uint32_t distance = 0;
-  // err leaked memmory control var to avoid double checks
-  bool invalidated = false;
 
-  printf("insira o nif: ");
-  while ((scanf("%lu", &nif) != 1) ||
-         (invalidated = (nif == 0 || nif < 10000000))) {
-    if (invalidated) {
-      puts("Inserido um nif invalido!");
-      printf("reinsira o nif: ");
-      continue;
-    }
-    clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-    printf("reinsira o nif: ");
-  }
-
-  printf("insira o id do veiculo: ");
-  while ((invalidated = scanf("%s", v_id_str) != 1) ||
-         (v_id = search_vehicle_by_id(v, v_id_str)) == NULL) {
-    if (!invalidated) { // no vehicle found
-      puts("Inserido um Id invalido!");
-      printf("reinsira o id do veiculo: ");
-      continue;
-    }
-    clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-    printf("reinsira o id do veiculo: ");
-  }
-
-  printf("insira o tempo de uso: ");
-  while ((scanf("%u", &time) != 1) ||
-         (invalidated = (time <= 0 || time > 1000000))) {
-    if (invalidated) {
-      puts("Inserido um valor invalido!");
-      printf("reinsira o tempo de uso: ");
-      continue;
-    }
-    clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-    printf("reinsira o tempo de uso: ");
-  }
-
-  printf("insira a distancia pretendida: ");
-  while ((scanf("%u", &distance) != 1) ||
-         (invalidated = (distance <= 0 || distance > 10000))) {
-    if (invalidated) {
-      puts("Inserido um valor invalido!");
-      printf("reinsira a distancia: ");
-      continue;
-    }
-    clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-    printf("reinsira a distancia: ");
+  prompt_nif(&nif);
+  if (prompt_vid(v, v_id_str)) {
+    v_id = search_vehicle_by_id(v, v_id_str);
   }
 
   // at this point all inputs are verified!
@@ -251,6 +259,9 @@ void input_switch(Vehicles *v, Orders *o) {
     break;
   case '2':
     status = rm_vehicle_by_id_prompt(v);
+    if (status == 0) {
+      cancel_vehicle_plan()
+    }
     break;
   case '3':
     status = order_build_prompt(o, v); // always evaluates to 0
