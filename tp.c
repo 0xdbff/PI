@@ -1,5 +1,10 @@
 #include "vec.h"
 
+void clean_stdin() {
+  for (int c; c = getchar() != '\n' && c != EOF;)
+    ;
+}
+
 Order *search_order_by_id(Orders *v, const size_t id) {
   for (size_t i = 0; i < v->len; i++) {
     if (id == (&v->data[i])->id)

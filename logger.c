@@ -1,5 +1,12 @@
 #include "log.h"
 
+uint8_t logger_init() {
+  //
+}
+uint8_t logger_exit() {
+  //
+}
+
 int log_to_file(const char *str) {
   time_t t = time(NULL);
   struct tm *tm = localtime(&t);

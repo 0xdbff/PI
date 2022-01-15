@@ -35,5 +35,5 @@ Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
                    const uint32_t time, const uint32_t distance);
 
 // bool validate_order(Order *v);
-
+void clean_stdin();
 #endif // __TP_H__

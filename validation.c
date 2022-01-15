@@ -60,27 +60,38 @@ static inline size_t calculate_dst_v(Vehicle *v_id, Orders *o) {
 }
 
 static inline Vehicle *search_vehicle_by_type(Vehicles *v, const char *type,
-                                              int previous_match) {
-  for (size_t i = previous_match++; i < v->len; i++) {
-    if ((strcmp(type, (&v->data[i])->type)) == 0)
-      return &v->data[i];
+                                              ssize_t *previous_idx) {
+  ssize_t j = 0;
+  puts("reached fn");
+  for (size_t i = *(previous_idx)++; i < v->len; i++) {
+    if ((strcmp(type, (&v->data[i])->type)) == 0) {
+      j = i;
+      printf("%lu", j);
+      if (j > *(previous_idx)) {
+        *(previous_idx) = i;
+        return &v->data[i];
+      }
+    }
   }
   return NULL;
 }
 
 Vehicle *assign_vid(Vehicles *v, Orders *o, Vehicle *v_id,
                     const uint32_t distance) {
+  puts("reached one");
   uint32_t distance_needed = distance;
-  if (distance_needed += calculate_dst_v(v_id, o) <= v_id->autonomy)
+  if ((distance_needed += calculate_dst_v(v_id, o)) <= v_id->autonomy)
     return v_id;
   // try find another vehicle with the same type
+  puts("reached one 2");
   Vehicle *temp = v_id;
-  for (int i = -1; v_id == NULL;
-       v_id = search_vehicle_by_type(v, v_id->type, i)) {
+  for (ssize_t i = -1; v_id == NULL;
+       v_id = search_vehicle_by_type(v, v_id->type, &i)) {
+    puts("reached one 3");
     if (temp == v_id) // dont check the same vehicle
       continue;
     distance_needed = distance; // reset variable
-    if (distance_needed += calculate_dst_v(v_id, o) <= v_id->autonomy)
+    if ((distance_needed += calculate_dst_v(v_id, o)) <= v_id->autonomy)
       return v_id;
   }
   return NULL;
