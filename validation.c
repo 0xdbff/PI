@@ -6,18 +6,24 @@
 // "public", data validation should be managed differently in a more secure
 // environment, data modification would be statically called here, given
 // pointers to other libs should point only to allocated temporary structs, not
-// all the data the program has, if thats nedded then the const modifier would
+// "all" the data the program has, if thats nedded then the const modifier would
 // have to be considered in some places to avoid security issues. clones and
 // read only memory managed at some degree of control, as the project grows some
 // areas are not meant to be accessable from others.
 
 // validation by struct field for readability, allocating all this funtions
-// comes with some runtime cost, so thats why we havent used some of them.
+// comes with some runtime cost, so thats why we havent used some of them,
+// inlining would make sense on static calls
 
 size_t assign_oid(Orders *v) {
-  // return (v->len)++; // v->len is dynamic so..., this doesn't work at all
+  // return (v->len)+1; // v->len is dynamic so..., this doesn't work at all
   // so we have to loop through the vec and find the biggest value
-  return (v->len)++;
+  size_t m = 0;
+  for (size_t i = 0; i < v->len; i++) {
+    if (((&v->data[i])->nif) > m)
+      m = (&v->data[i])->nif;
+  }
+  return m + 1;
 }
 
 bool vehicle_id_exists(Vehicles *v, const char *id) {
@@ -36,22 +42,22 @@ bool order_id_exists(Orders *v, const size_t id) {
   return false;
 }
 
-uint8_t validate_price(float *price) {
-  return (*price > 0) && (*price < 1000000) ? 1 : 0;
+uint8_t invalidate_price(float *price) {
+  return (*price > 0) && (*price < 1000000) ? 0 : 1;
 }
 
-uint8_t validate_autonomy(uint32_t *autonomy) {
-  return (*autonomy != 0 && *autonomy <= 10000) ? 1 : 0;
+uint8_t invalidate_autonomy(uint32_t *autonomy) {
+  return (*autonomy != 0 && *autonomy <= 10000) ? 0 : 1;
 }
 
-uint8_t validate_nif(size_t *nif) { return (*nif >= 10000000) ? 1 : 0; }
+uint8_t invalidate_nif(size_t *nif) { return (*nif >= 10000000) ? 0 : 1; }
 
-uint8_t validate_time(uint32_t *time) {
-  return (*time <= 10000 && *time != 0) ? 1 : 0;
+uint8_t invalidate_time(uint32_t *time) {
+  return (*time <= 10000 && *time != 0) ? 0 : 1;
 }
 
-uint8_t validate_distance(uint32_t *distance) {
-  return (*distance <= 10000 && *distance != 0) ? 1 : 0;
+uint8_t invalidate_distance(uint32_t *distance) {
+  return (*distance <= 10000 && *distance != 0) ? 0 : 1;
 }
 
 static inline size_t calculate_dst(Vehicle *v_id, Orders *o) {

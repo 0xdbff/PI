@@ -22,6 +22,7 @@ static inline void prompt_vid(char *input) {
   while (scanf("%s", input) != 1) {
     clean_stdin(); // fflush(stdin) is bad practice;
     LOG_ERR("Valor introduzido nao validado, reintroduza\n");
+    printf("insira o id de veiculo: ");
   }
 }
 
@@ -30,6 +31,7 @@ static inline void prompt_type(char *input) {
   while (scanf("%s", input) != 1) {
     clean_stdin();
     LOG_ERR("Valor introduzido nao validado, reintroduza\n");
+    printf("insira o tipo de veiculo: ");
   }
 }
 
@@ -40,10 +42,6 @@ static inline void prompt_price(float *input) {
     LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
     printf("insira o preco/min: ");
   }
-  if ((*input <= 0) || (*input > 1000000)) {
-    puts("Inserido um valor igual 0 ou maior que E6!");
-    prompt_price(input);
-  }
 }
 
 static inline void prompt_autonomy(uint32_t *input) {
@@ -51,18 +49,16 @@ static inline void prompt_autonomy(uint32_t *input) {
   while (scanf("%u", input) != 1) {
     clean_stdin();
     LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-  }
-  if ((*input == 0) || (*input > 10000)) {
-    puts("Inserido um valor igual a 0 ou maior que E4!");
-    prompt_autonomy(input);
+    printf("insira a autonomia do veiculo: ");
   }
 }
 
 static inline void prompt_oid(size_t *input) {
-  printf("insira o nif: ");
+  printf("insira o id: ");
   while (scanf("%lu", input) != 1) {
     clean_stdin();
     LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    printf("insira o id: ");
   }
 }
 
@@ -71,10 +67,7 @@ static inline void prompt_nif(size_t *input) {
   while (scanf("%lu", input) != 1) {
     clean_stdin();
     LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-  }
-  if ((*input < 10000000)) {
-    puts("Inserido um nif invalido!");
-    prompt_nif(input);
+    printf("insira o nif: ");
   }
 }
 
@@ -83,10 +76,7 @@ static inline void prompt_time(uint32_t *input) {
   while (scanf("%u", input) != 1) {
     clean_stdin();
     LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
-  }
-  if ((*input == 0) || (*input > 10000)) {
-    puts("Inserido um valor igual a 0 ou maior que E4!");
-    prompt_time(input);
+    printf("insira o tempo de uso: ");
   }
 }
 
@@ -95,11 +85,17 @@ static inline void prompt_distance(uint32_t *input) {
   while (scanf("%u", input) != 1) {
     clean_stdin();
     LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    printf("insira a distancia: ");
   }
-  if ((*input == 0) || (*input > 10000)) {
-    puts("Inserido um valor igual a 0 ou maior que E4!");
-    prompt_distance(input);
-  }
+}
+
+static inline void list_vehicle(Vehicles *v, size_t i) {
+  printf("%s\t%s\t%f\t%u\n", (&v->data[i])->id, (&v->data[i])->type,
+         (&v->data[i])->price, (&v->data[i])->autonomy);
+}
+
+static inline void list_vehicle_by_ptr(Vehicle *v_id) {
+  printf("%s\t%s\t%f\t%u\n", v_id->id, v_id->type, v_id->price, v_id->autonomy);
 }
 
 static inline uint8_t vehicle_build_prompt(Vehicles *v) {
@@ -107,22 +103,33 @@ static inline uint8_t vehicle_build_prompt(Vehicles *v) {
   // initialized chars only, and has less cpu iterations.
   char *id = malloc(VEHICLE_ID_MAX_CHARS);
   char *type = malloc(VEHICLE_TYPE_MAX_CHARS);
-  float price = 0.1;
+  float price = 0.0;
   uint32_t autonomy = 0;
 
   prompt_vid(id);
-  prompt_type(type);
-  prompt_price(&price);
-  prompt_autonomy(&autonomy);
+  if (vehicle_id_exists(v, id)) {
+    free(id);
+    free(type);
+    puts("Id de veiculo ja existe!");
+    return 0;
+  }
+  prompt_type(type); // nothing to verify
 
-  printf("%s\n", id);
-  printf("%s\n", type);
-  printf("%f\n", price);
-  printf("%u\n", autonomy);
+  prompt_price(&price);
+  while (price == 0 || price >= 1000000) {
+    puts("Inserido valor igual a 0 ou maior que E6!");
+    prompt_price(&price);
+  }
+  prompt_autonomy(&autonomy);
+  while (autonomy == 0 || autonomy >= 1000000) {
+    puts("Inserido valor igual a 0 ou maior que E6!");
+    prompt_autonomy(&autonomy);
+  }
 
   // all inputs are verified at this point
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
-  // LOG
+  printf("|INFO |\tAdded vehicle:\t");
+  list_vehicle(v, (v->len) - 1);
   free(id);
   free(type);
   return 0;
@@ -170,10 +177,25 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
   }
 
   prompt_nif(&nif);
-  /* while ((v_id = prompt_vid_get_veh(v, v_id_str)) == NULL) */
-  /*   puts("inserido um Id de veiculo invalido!"); */
+  while (nif <= 10000000) {
+    puts("inserido um nif invalido!");
+    prompt_nif(&nif);
+  }
+  prompt_vid(v_id_str);
+  while ((v_id = search_vehicle_by_id(v, v_id_str)) == NULL) {
+    puts("inserido um Id de veiculo invalido!");
+    prompt_vid(v_id_str);
+  }
   prompt_time(&time);
+  while (time == 0 || time >= 1000000) {
+    puts("Inserido valor igual a 0 ou maior que E6!");
+    prompt_time(&time);
+  }
   prompt_distance(&distance);
+  while (distance == 0 || distance >= 1000000) {
+    puts("Inserido valor igual a 0 ou maior que E6!");
+    prompt_distance(&distance);
+  }
 
   // at this point all inputs are verified!
   Vehicle *vid = assign_vid(v, o, v_id, distance);
@@ -202,22 +224,20 @@ static inline uint8_t rm_order_by_id(Orders *v, size_t input) {
 }
 
 // 07
-static inline uint8_t list_vehicles(Vehicles *v) {
+static inline void list_vehicles(Vehicles *v) {
   for (size_t i = 0; i < v->len; i++) {
     printf("%s\t%s\t%f\t%u\n", (&v->data[i])->id, (&v->data[i])->type,
            (&v->data[i])->price, (&v->data[i])->autonomy);
   }
-  return 0;
 }
 
 // 08
-static inline uint8_t list_orders(Orders *v) {
+static inline void list_orders(Orders *v) {
   for (size_t i = 0; i < v->len; i++) {
     printf("%lu\t%lu\t%s\t%u\t%u\n", (&v->data[i])->id, (&v->data[i])->nif,
            ((&v->data[i])->v_id)->id, (&v->data[i])->time,
            (&v->data[i])->distance);
   }
-  return 0;
 }
 
 // 09
@@ -230,6 +250,19 @@ static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
     return 61;
   printf("%f", ((o->v_id)->price) * (o->time));
   return 0;
+}
+
+static inline void vehicle_plan(Vehicle *v_id, Orders *o) {
+  size_t t = 0;
+  uint32_t a = v_id->autonomy;
+  for (size_t i = 0; i < o->len; i++) {
+    if (v_id == (&o->data[i])->v_id) {
+      printf("%lu\t%lu\t%lu\t%lu\t%u\t%s\n", (&o->data[i])->id,
+             (&o->data[i])->nif, t, t + (&o->data[i])->time, a, v_id->id);
+      a -= (&o->data[i])->distance;
+      t += (&o->data[i])->time;
+    }
+  }
 }
 
 void input_switch(Vehicles *v, Orders *o) {
@@ -269,10 +302,13 @@ void input_switch(Vehicles *v, Orders *o) {
   case '4':
     break;
   case '5':
+    list_vehicles(v);
     break;
   case '6':
+    list_orders(o);
     break;
   case '7':
+    vehicle_plan(search_vehicle_by_id(v, "M_3"), o);
     break;
   case '8':
     break;

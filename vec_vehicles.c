@@ -80,17 +80,6 @@ Vehicle *vec_vehicles_get(Vehicles *v, size_t i) {
   return &v->data[i];
 }
 
-void vec_vehicles_push_alloc(Vehicles *v, char *id, char *type, float price,
-                             unsigned int autonomy) {
-  assert(v);
-  Vehicle *value = (Vehicle *)malloc(sizeof(Vehicle));
-
-  if (v->len == v->capacity) {
-    vec_vehicles_expand(v);
-  }
-  v->data[v->len++] = *value;
-}
-
 void vec_vehicles_push(Vehicles *v, Vehicle *value) {
   assert(v);
   if (v->len == v->capacity) {
