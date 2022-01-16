@@ -17,6 +17,7 @@
 size_t assign_oid(Orders *v) {
   // return (v->len)++; // v->len is dynamic so..., this doesn't work at all
   // so we have to loop through the vec and find the biggest value
+  return (v->len)++;
 }
 
 bool vehicle_id_exists(Vehicles *v, const char *id) {

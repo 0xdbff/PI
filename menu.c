@@ -17,22 +17,9 @@ static void menu_print() {
   puts("q=> sair sem guardar");
 }
 
-static inline uint8_t prompt_vid(Vehicles *v, char *input) {
-  printf("insira o tipo de veiculo: ");
-  while ((fgets(input, VEHICLE_ID_MAX_CHARS, stdin) == NULL)) {
-    clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza\n");
-  }
-  // VERIFY!: does not exist
-  if (vehicle_id_exists(v, input) == true) {
-    return 1;
-  }
-  return 0;
-}
-
-static inline uint8_t prompt_vid_uv(Vehicles *v, char *input) {
-  printf("insira o tipo de veiculo: ");
-  while ((fgets(input, VEHICLE_ID_MAX_CHARS, stdin) == NULL)) {
+static inline void prompt_vid(char *input) {
+  printf("insira o id de veiculo: ");
+  while (scanf("%s", input) != 1) {
     clean_stdin(); // fflush(stdin) is bad practice;
     LOG_ERR("Valor introduzido nao validado, reintroduza\n");
   }
@@ -40,7 +27,7 @@ static inline uint8_t prompt_vid_uv(Vehicles *v, char *input) {
 
 static inline void prompt_type(char *input) {
   printf("insira o tipo de veiculo: ");
-  while ((fgets(input, VEHICLE_TYPE_MAX_CHARS, stdin) == NULL)) {
+  while (scanf("%s", input) != 1) {
     clean_stdin();
     LOG_ERR("Valor introduzido nao validado, reintroduza\n");
   }
@@ -71,6 +58,14 @@ static inline void prompt_autonomy(uint32_t *input) {
   }
 }
 
+static inline void prompt_oid(size_t *input) {
+  printf("insira o nif: ");
+  while (scanf("%lu", input) != 1) {
+    clean_stdin();
+    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+  }
+}
+
 static inline void prompt_nif(size_t *input) {
   printf("insira o nif: ");
   while (scanf("%lu", input) != 1) {
@@ -79,7 +74,7 @@ static inline void prompt_nif(size_t *input) {
   }
   if ((*input < 10000000)) {
     puts("Inserido um nif invalido!");
-    prompt_autonomy(input);
+    prompt_nif(input);
   }
 }
 
@@ -91,7 +86,7 @@ static inline void prompt_time(uint32_t *input) {
   }
   if ((*input == 0) || (*input > 10000)) {
     puts("Inserido um valor igual a 0 ou maior que E4!");
-    prompt_autonomy(input);
+    prompt_time(input);
   }
 }
 
@@ -103,7 +98,7 @@ static inline void prompt_distance(uint32_t *input) {
   }
   if ((*input == 0) || (*input > 10000)) {
     puts("Inserido um valor igual a 0 ou maior que E4!");
-    prompt_autonomy(input);
+    prompt_distance(input);
   }
 }
 
@@ -115,15 +110,15 @@ static inline uint8_t vehicle_build_prompt(Vehicles *v) {
   float price = 0.1;
   uint32_t autonomy = 0;
 
-  if (prompt_vid(v, id)) {
-    puts("Id ja existe!");
-    free(id);
-    free(type);
-    return 1;
-  }
+  prompt_vid(id);
   prompt_type(type);
   prompt_price(&price);
   prompt_autonomy(&autonomy);
+
+  printf("%s\n", id);
+  printf("%s\n", type);
+  printf("%f\n", price);
+  printf("%u\n", autonomy);
 
   // all inputs are verified at this point
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
@@ -168,37 +163,42 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
   uint32_t time = 0;
   uint32_t distance = 0;
 
-  prompt_nif(&nif);
-  if (prompt_vid(v, v_id_str)) {
-    v_id = search_vehicle_by_id(v, v_id_str);
+  if (v->len == 0) {
+    LOG_ERR("Nao exitem veiculos!");
+    free(v_id_str);
+    return 1;
   }
+
+  prompt_nif(&nif);
+  /* while ((v_id = prompt_vid_get_veh(v, v_id_str)) == NULL) */
+  /*   puts("inserido um Id de veiculo invalido!"); */
+  prompt_time(&time);
+  prompt_distance(&distance);
 
   // at this point all inputs are verified!
   Vehicle *vid = assign_vid(v, o, v_id, distance);
   if (vid == NULL) {
-    puts("err");
+    puts("Nao foi encontrado nenhum veiculo apto para a ordem pretendida.");
     return 1;
   }
   if (vid == v_id) {
-    puts("same");
+    puts("Veiculo pretendido disponivel!");
   } else {
-    printf("%s", vid->id);
+    puts("Veiculo pretendido nao disponivel!");
+    printf("Esta disponivel o veiculo %s do tipo %s", vid->id, vid->type);
   }
-  vec_orders_push(o, order_build((o->len)++, nif, v_id, time, distance));
+  vec_orders_push(o, order_build(assign_oid(o), nif, vid, time, distance));
   return 0;
 }
 
-static inline uint8_t rm_order_by_id_prompt(Orders *v) {
-  size_t input = 0;
-  if (scanf("%lu", &input) != 1)
-    return 5;
+static inline uint8_t rm_order_by_id(Orders *v, size_t input) {
   for (size_t i = 0; i < v->len; i++) {
     if (input == (&v->data[i])->id) {
       vec_orders_rm_at(v, i);
       return 0;
     }
   }
-  return 61;
+  return 1;
 }
 
 // 07
@@ -258,10 +258,10 @@ void input_switch(Vehicles *v, Orders *o) {
     status = vehicle_build_prompt(v); // always evaluates to 0
     break;
   case '2':
-    status = rm_vehicle_by_id_prompt(v);
-    if (status == 0) {
-      cancel_vehicle_plan()
-    }
+    /* status = rm_vehicle_by_id(v, prompt_oid_get()); */
+    /* if (status == 0) { */
+    /*   cancel_vehicle_plan(); */
+    /* } */
     break;
   case '3':
     status = order_build_prompt(o, v); // always evaluates to 0
