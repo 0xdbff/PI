@@ -152,8 +152,12 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v, Orders *o) {
   }
   for (size_t i = 0; i < v->len; i++) {
     if ((strcmp(input, (&v->data[i])->id)) == 0) {
+      if ((&v->data[i])->active == true) {
+        LOG_WARN("existem ordens dependentes do veiculo que pretende remover!, "
+                 "cancelar Ordens?");
+      }
       // search for orders that need to be canceled
-      cancel_vehicle_plan(&v->data[i], o);
+      /* cancel_vehicle_plan(&v->data[i], o); */
       vec_vehicles_rm_at(v, i);
       free(input);
       return 0;
@@ -171,7 +175,7 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
   uint32_t distance = 0;
 
   if (v->len == 0) {
-    LOG_ERR("Nao exitem veiculos!");
+    LOGF_ERR("Nao exitem veiculos!");
     free(v_id_str);
     return 1;
   }
@@ -209,6 +213,8 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
     puts("Veiculo pretendido nao disponivel!");
     printf("Esta disponivel o veiculo %s do tipo %s", vid->id, vid->type);
   }
+  if (vid->active == false)
+    vid->active = true;
   vec_orders_push(o, order_build(assign_oid(o), nif, vid, time, distance));
   return 0;
 }

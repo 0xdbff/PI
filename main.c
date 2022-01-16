@@ -7,6 +7,7 @@ Vehicle *vehicle_build(const char *id, const char *type, const float price,
   v->type = strdup(type);
   v->price = price;
   v->autonomy = autonomy;
+  v->active = false;
 
   return v;
 }
@@ -34,6 +35,3 @@ int main(int argc, const char **argv) {
   vec_orders_destroy(o);
   vec_vehicles_destroy(v);
 }
-
-// C devs be like
-// pointers are my b*tch
