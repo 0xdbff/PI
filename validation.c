@@ -20,8 +20,8 @@ size_t assign_oid(Orders *v) {
   // so we have to loop through the vec and find the biggest value
   size_t m = 0;
   for (size_t i = 0; i < v->len; i++) {
-    if (((&v->data[i])->nif) > m)
-      m = (&v->data[i])->nif;
+    if (((&v->data[i])->id) > m)
+      m = (&v->data[i])->id;
   }
   return m + 1;
 }
