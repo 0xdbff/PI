@@ -10,7 +10,7 @@
 #endif // L_PATH
 
 typedef struct Log { // never constructed, no time! \:
-  FILE *fp;          // we want the file opened while the program is running.
+  FILE *fp;          // we wanted the file opened while the program is running.
   struct tm *time;
 } Log;
 
@@ -29,7 +29,9 @@ typedef struct Log { // never constructed, no time! \:
 
 #ifndef LC_ERR
 #define LC_ERR "\033[91m|ERROR|\t"
+#define LC_FATAL "\033[91m|FATAL|\t"
 #define LC_WARN "\033[93m|WARN |\t"
+#define LC_WARN_R "\033[91m|WARN |\t"
 #define LC_INFO "\033[92m|INFO |\t"
 #define LC_FATAL "\033[91m|FATAL|\t"
 #define LC_RESET "\033[0m"
@@ -39,35 +41,44 @@ void log_to_file(const char *str);
 
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \
-  fprintf(stderr, LC_ERR "%d : %s!", ERRNO, strerror(ERRNO));                  \
+  fprintf(stderr, LC_ERR "%d : %s!\n" LC_RESET, ERRNO, strerror(ERRNO));       \
   log_to_file(strerror(ERRNO));
 
 // doesn't log to file
-#define LOG_ERR(STR) fprintf(stderr, LC_ERR "%s" LC_RESET, STR)
+#define LOG_ERR(STR) fprintf(stderr, LC_ERR "%s" LC_RESET "\n", STR)
 
 #define LOGF_ERR(STR)                                                          \
-  fprintf(stderr, LC_ERR "%s\n" LC_RESET, STR);                                \
+  fprintf(stderr, LC_ERR "%s" LC_RESET "\n", STR);                             \
   log_to_file(L_ERR STR);
-
-#define LOG_ERRNO_EXIT(ERRNO)                                                  \
-  fprintf(stderr, LC_ERR "exit(%d) : %s!" LC_RESET, ERRNO, strerror(ERRNO));   \
-  exit(ERRNO);
-
-#define LOG_STRERR_EXIT(STR, ERRNO)                                            \
-  LOG_ERR(STR);                                                                \
-  LOG_ERRNO_EXIT(ERRNO);
 #endif // LOR_ERR
 
 #ifndef LOG_INFO
-#define LOG_INFO(STR) puts(LC_INFO "%s" LC_RESET, STR);
+#define LOG_INFO(STR)                                                          \
+  printf(LC_INFO "%s" LC_RESET "\n", STR);                                     \
+  log_to_file(L_INFO STR)
 //! TODO
 #endif // LOG_INFO
 
 #ifndef LOG_WARN
 #define LOG_WARN(STR)                                                          \
   printf(LC_WARN "%s" LC_RESET "\n", STR);                                     \
-  log_to_file(STR);
+  log_to_file(L_WARN STR);
+
+#define LOG_WARN_R(STR)                                                        \
+  printf(LC_WARN_R "%s" LC_RESET "\n", STR);                                   \
+  log_to_file(L_WARN STR);
 //! TODO
 #endif // LOG_WARN
+
+#ifndef LOG_FATAL
+#define LOG_ERRNO_EXIT(ERRNO)                                                  \
+  log_to_file(L_FATAL strerror(ERRNO));                                        \
+  fprintf(stderr, LC_FATAL "exit(%d) : %s!" LC_RESET, ERRNO, strerror(ERRNO)); \
+  exit(ERRNO);
+
+#define LOG_FATAL(STR, ERRNO)                                                  \
+  LOG_ERR(STR);                                                                \
+  LOG_ERRNO_EXIT(ERRNO)
+#endif // LOF_FATAL
 
 #endif // __LOG_H__

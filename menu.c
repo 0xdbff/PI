@@ -94,8 +94,22 @@ static inline void list_vehicle(Vehicles *v, size_t i) {
          (&v->data[i])->price, (&v->data[i])->autonomy);
 }
 
+static inline char *list_vehicle_str(Vehicles *v, size_t i) {
+  char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 3));
+  sprintf(str, "%s\t%s\t%f\t%u\n", (&v->data[i])->id, (&v->data[i])->type,
+          (&v->data[i])->price, (&v->data[i])->autonomy);
+  return str; // freed latter
+}
+
 static inline void list_vehicle_by_ptr(Vehicle *v_id) {
   printf("%s\t%s\t%f\t%u\n", v_id->id, v_id->type, v_id->price, v_id->autonomy);
+}
+
+static inline char *list_vehicle_by_ptr_str(Vehicle *v_id) {
+  char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 3));
+  sprintf(str, "%s\t%s\t%f\t%u\n", v_id->id, v_id->type, v_id->price,
+          v_id->autonomy);
+  return str; // free latter
 }
 
 static inline uint8_t vehicle_build_prompt(Vehicles *v) {
@@ -103,6 +117,7 @@ static inline uint8_t vehicle_build_prompt(Vehicles *v) {
   // initialized chars only, and has less cpu iterations.
   char *id = malloc(VEHICLE_ID_MAX_CHARS);
   char *type = malloc(VEHICLE_TYPE_MAX_CHARS);
+  char *log;
   float price = 0.0;
   uint32_t autonomy = 0;
 
@@ -128,8 +143,9 @@ static inline uint8_t vehicle_build_prompt(Vehicles *v) {
 
   // all inputs are verified at this point
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
-  printf("|INFO |\tAdded vehicle:\t");
-  list_vehicle(v, (v->len) - 1);
+  LOG_INFO("registered vehicle");
+  log_to_file(log = (list_vehicle_str(v, (v->len) - 1)));
+  free(log);
   free(id);
   free(type);
   return 0;

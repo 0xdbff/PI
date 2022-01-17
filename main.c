@@ -24,12 +24,19 @@ Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
   return o;
 }
 
+void err_exit(Vehicles *v, Orders *o) {
+  vec_orders_destroy(o);
+  vec_vehicles_destroy(v);
+}
+
 int main(int argc, const char **argv) {
+  LOG_INFO("added vehicle");
 
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
 
-  read_vehicles(v);
+  /* read_vehicles(v); */
+  /* read_orders(o); */
   menu(v, o);
 
   vec_orders_destroy(o);

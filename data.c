@@ -1,9 +1,10 @@
 #include "vec.h"
 
-void read_vehicles(Vehicles *v) {
-  FILE *fp = fopen("./data/vehicles.tsv", "r");
-  if (ferror(fp)) {
+static inline uint8_t read_vehicles(Vehicles *v) {
+  FILE *fp;
+  if ((fp = fopen("./data/vehicles.tsv", "r")) == NULL) {
     LOG_ERRNO(2);
+    LOG_WARN_R("Vehicles not read!")
     return;
   }
   char *line = NULL;
@@ -17,6 +18,8 @@ void read_vehicles(Vehicles *v) {
 
   while ((read = getline(&line, &len, fp)) != -1) {
     if ((sscanf(line, "%s %s %f %u", id, type, &price, &autonomy)) != 4) {
+      // this will spam the log file with the amount of broken lines "vehicles"
+      // if a broken file is given
       LOGF_ERR("Corrupted Vehicles file, value on that line not read!");
       continue;
     }
@@ -30,10 +33,11 @@ void read_vehicles(Vehicles *v) {
   fclose(fp);
 }
 
-void write_vehicles(Vehicles *v) {
+static inline uint8_t write_vehicles(Vehicles *v) {
   FILE *fp = fopen("./data/vehicles.tsv", "w+");
   if (ferror(fp)) {
     LOG_ERRNO(2);
+    LOG_WARN("Vehicles not written!")
     return;
   }
   for (size_t i = 0; i < v->len; i++) {
@@ -43,10 +47,11 @@ void write_vehicles(Vehicles *v) {
   fclose(fp);
 }
 
-void read_orders(Orders *v) {
-  FILE *fp = fopen("./data/orders.tsv", "r");
-  if (ferror(fp)) {
+static inline uint8_t read_orders(Orders *v) {
+  FILE *fp;
+  if ((fp = fopen("./data/orders.tsv", "r")) == NULL) {
     LOG_ERRNO(2);
+    LOG_WARN_R("Orders not read!");
     return;
   }
   char *line = NULL;
@@ -78,6 +83,7 @@ void write_orders(Orders *v) {
   FILE *fp = fopen("./data/orders.tsv", "w+");
   if (ferror(fp)) {
     LOG_ERRNO(2);
+    LOG_WARN("Orders not written!")
     return;
   }
   for (size_t i = 0; i < v->len; i++) {

@@ -14,7 +14,9 @@ Orders *vec_orders_new() {
   return v;
 
 error:
-  LOG_STRERR_EXIT("alooc problenns", 12)
+  //  LOG_STRERR_EXIT("alooc problenns", 12)
+  //  !TODO
+  return;
 }
 
 void vec_orders_expand(Orders *v) {
