@@ -128,10 +128,8 @@ void vec_vehicles_rm_at(Vehicles *v, size_t i) {
   }
 }
 
-void vec_vehicles_clear(Vehicles *v) {
+void vec_vehicles_reset(Vehicles *v) {
   assert(v);
-  v->len = 0;
-  while (v->capacity > V_ALLOC) {
-    vec_vehicles_halve(v);
-  }
+  vec_vehicles_destroy(v);
+  v = vec_vehicles_new();
 }

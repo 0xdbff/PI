@@ -33,7 +33,8 @@ Vehicle *search_vehicle_by_id(Vehicles *v, const char *id) {
   return NULL;
 }
 // inline
-Vehicle *search_vehicle_by_type(Vehicles *v, const char *type, size_t *pos) {
+static inline Vehicle *search_vehicle_by_type(Vehicles *v, const char *type,
+                                              size_t *pos) {
   for (size_t i = *pos; i < v->len; i++) {
     if (((strcmp(type, (&v->data[i])->type)) == 0) && (i >= *pos)) {
       *pos = i + 1;

@@ -5,7 +5,7 @@ static inline uint8_t read_vehicles(Vehicles *v) {
   if ((fp = fopen("./data/vehicles.tsv", "r")) == NULL) {
     LOG_ERRNO(2);
     LOG_WARN_R("Vehicles not read!")
-    return;
+    return 2;
   }
   char *line = NULL;
   size_t len;
@@ -18,10 +18,9 @@ static inline uint8_t read_vehicles(Vehicles *v) {
 
   while ((read = getline(&line, &len, fp)) != -1) {
     if ((sscanf(line, "%s %s %f %u", id, type, &price, &autonomy)) != 4) {
-      // this will spam the log file with the amount of broken lines "vehicles"
-      // if a broken file is given
-      LOGF_ERR("Corrupted Vehicles file, value on that line not read!");
-      continue;
+      LOGF_ERR("Corrupted Vehicles file, not read!");
+      vec_vehicles_reset(v);
+      return 1;
     }
     vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
   }
@@ -52,7 +51,7 @@ static inline uint8_t read_orders(Orders *v) {
   if ((fp = fopen("./data/orders.tsv", "r")) == NULL) {
     LOG_ERRNO(2);
     LOG_WARN_R("Orders not read!");
-    return;
+    return 2;
   }
   char *line = NULL;
   size_t len;
@@ -60,26 +59,35 @@ static inline uint8_t read_orders(Orders *v) {
 
   size_t id = 0;
   size_t nif = 0;
-  char *v_id = malloc(sizeof(char) * VEHICLE_ID_MAX_CHARS);
+  char *v_id_str = malloc(sizeof(char) * VEHICLE_ID_MAX_CHARS);
   unsigned int time = 0;
   unsigned int distance = 0;
 
   while ((read = getline(&line, &len, fp)) != -1) {
     if (sscanf(line, "%lu %lu %s %u %u", &id, &nif, v_id, &time, &distance) !=
-        5)
-      LOG_ERRNO(1);
-    /* if (v_id->active == false) */
-    /*   v_id->active = true; */
-    vec_orders_push(v, order_build(id, nif, v_id, time, distance));
+        5) {
+      LOGF_ERR("Corrupted Orders file, not read!");
+      vec_orders_reset(v);
+      return 1;
+    }
+    Vehicle *v_id = search_vehicle_by_id(v_id_str);
+    // test NULL
+    Order *data = validate_order(order_build(id, nif, v_id, time, distance));
+    if (data == NULL) {
+      LOGF_ERR("Corrupted Orders file, not read!");
+      vec_orders_reset(v);
+      return 1;
+    }
+    vec_orders_push(v, data);
   }
 
   if (line)
     free(line);
-  free(v_id);
+  free(v_id_str);
   fclose(fp);
 }
 
-void write_orders(Orders *v) {
+static inline uint8_t write_orders(Orders *v) {
   FILE *fp = fopen("./data/orders.tsv", "w+");
   if (ferror(fp)) {
     LOG_ERRNO(2);
@@ -92,4 +100,16 @@ void write_orders(Orders *v) {
             (&v->data[i])->distance);
   }
   fclose(fp);
+}
+
+uint8_t read_data_err(Vehicles *v, Orders *o) {
+  if (read_vehicles(v) || read_orders(o))
+    return 1;
+  return 0;
+}
+
+uint8_t write_data_err(Vehicles *v, Orders *o) {
+  if (write_vehicles(v) || write_orders(o))
+    return 1;
+  return 0;
 }

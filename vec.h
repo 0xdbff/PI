@@ -26,6 +26,7 @@ typedef struct order_vec {
 } Orders;
 
 Orders *vec_orders_new();
+Order *vec_orders_get(Orders *v, size_t idx);
 size_t vec_orders_len(Orders *);
 bool vec_orders_is_empty(Orders *);
 void vec_orders_change_at(Orders *, size_t, Order *);
@@ -34,8 +35,6 @@ void vec_orders_push_at(Orders *, size_t, Order *);
 void vec_orders_destroy(Orders *);
 void vec_orders_halve(Orders *);
 void vec_orders_expand(Orders *);
-
-Order *vec_orders_get(Orders *v, size_t idx);
 void vec_orders_push(Orders *v, Order *value);
 
 Vehicles *vec_vehicles_new();
@@ -56,6 +55,6 @@ Vehicle *search_vehicle_by_id(Vehicles *v, const char *id);
 Vehicle *validate_order(Vehicles *v, Orders *o, Vehicle *v_id,
                         const uint32_t distance);
 
-/* uint8_t read_vehicles(Vehicles *); */
-/* uint8_t read_orders(Orders *); */
+uint8_t read_data_err(Vehicles *, Orders *);
+uint8_t write_data_err(Vehicles *, Orders *);
 #endif

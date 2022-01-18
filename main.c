@@ -30,13 +30,24 @@ void err_exit(Vehicles *v, Orders *o) {
 }
 
 int main(int argc, const char **argv) {
-  LOG_INFO("added vehicle");
-
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
 
-  /* read_vehicles(v); */
-  /* read_orders(o); */
+  vec_vehicles_reset(v);
+
+  // // CLI
+  if (argv[1] != NULL) {
+    printf("%s\n", argv[1]);
+    if (argv[2] != NULL)
+      printf("%s\n", argv[2]);
+    else
+      puts("specify an input");
+    printf("%d", argc);
+    return 0;
+  }
+
+  // cli(v,o)
+  // TUI "text user interface"
   menu(v, o);
 
   vec_orders_destroy(o);

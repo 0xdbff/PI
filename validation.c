@@ -6,14 +6,10 @@
 // "public", data validation should be managed differently in a more secure
 // environment, data modification would be statically called here, given
 // pointers to other libs should point only to allocated temporary structs, not
-// "all" the data the program has, if thats nedded then the const modifier would
+// "all" data the program has, if thats nedded then the const modifier would
 // have to be considered in some places to avoid security issues. clones and
 // read only memory managed at some degree of control, as the project grows some
 // areas are not meant to be accessable from others.
-
-// validation by struct field for readability, allocating all this funtions
-// comes with some runtime cost, so thats why we havent used some of them,
-// inlining would make sense on static calls
 
 size_t assign_oid(Orders *v) {
   // return (v->len)+1; // v->len is dynamic so..., this doesn't work at all
@@ -42,21 +38,23 @@ bool order_id_exists(Orders *v, const size_t id) {
   return false;
 }
 
-uint8_t invalidate_price(float *price) {
+static inline uint8_t invalidate_price(float *price) {
   return (*price > 0) && (*price < 1000000) ? 0 : 1;
 }
 
-uint8_t invalidate_autonomy(uint32_t *autonomy) {
+static inline uint8_t invalidate_autonomy(uint32_t *autonomy) {
   return (*autonomy != 0 && *autonomy <= 10000) ? 0 : 1;
 }
 
-uint8_t invalidate_nif(size_t *nif) { return (*nif >= 10000000) ? 0 : 1; }
+static inline uint8_t invalidate_nif(size_t *nif) {
+  return (*nif >= 10000000) ? 0 : 1;
+}
 
-uint8_t invalidate_time(uint32_t *time) {
+static inline uint8_t invalidate_time(uint32_t *time) {
   return (*time <= 10000 && *time != 0) ? 0 : 1;
 }
 
-uint8_t invalidate_distance(uint32_t *distance) {
+static inline uint8_t invalidate_distance(uint32_t *distance) {
   return (*distance <= 10000 && *distance != 0) ? 0 : 1;
 }
 
@@ -96,4 +94,22 @@ Vehicle *assign_vid(Vehicles *v, Orders *o, Vehicle *v_id,
       return v_id;
   }
   return NULL;
+}
+
+Order *validate_order(Vehicles *v, Orders *o, Order *oid) {
+  if (oid->id < assign_order(o))
+    return NULL;
+  if (invalidate_nif(oid->nif))
+    return NULL;
+  if (invalidate_time(oid->time))
+    return NULL;
+  if (invalidate_distance(oid->distance))
+    return NULL;
+  Vehicle *vid = assign_vid(v, o, oid->v_id, oid->distance);
+  if (vid == NULL)
+    return NULL;
+  oid->v_id = vid;
+  if (vid->active == false)
+    vid->active = true;
+  return oid;
 }

@@ -56,6 +56,8 @@ void log_to_file(const char *str);
 #define LOG_INFO(STR)                                                          \
   printf(LC_INFO "%s" LC_RESET "\n", STR);                                     \
   log_to_file(L_INFO STR)
+#define LOG_INFO_NW(STR)                                                       \
+  printf(LC_INFO "%s" LC_RESET "\n", STR);                                     \
 //! TODO
 #endif // LOG_INFO
 
@@ -79,6 +81,6 @@ void log_to_file(const char *str);
 #define LOG_FATAL(STR, ERRNO)                                                  \
   LOG_ERR(STR);                                                                \
   LOG_ERRNO_EXIT(ERRNO)
-#endif // LOF_FATAL
+#endif // LOG_FATAL
 
 #endif // __LOG_H__

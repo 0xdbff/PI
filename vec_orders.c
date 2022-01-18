@@ -132,3 +132,10 @@ void vec_orders_clear(Orders *v) {
     vec_orders_halve(v);
   }
 }
+
+void vec_orders_reset(Orders *v) {
+  assert(v);
+  Vehicles *rm_ptr = v; // duplicate ptr
+  vec_orders_destroy(rm_ptr);
+  v = vec_orders_new();
+}

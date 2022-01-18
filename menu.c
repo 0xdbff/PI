@@ -94,22 +94,25 @@ static inline void list_vehicle(Vehicles *v, size_t i) {
          (&v->data[i])->price, (&v->data[i])->autonomy);
 }
 
-static inline char *list_vehicle_str(Vehicles *v, size_t i) {
-  char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 3));
-  sprintf(str, "%s\t%s\t%f\t%u\n", (&v->data[i])->id, (&v->data[i])->type,
-          (&v->data[i])->price, (&v->data[i])->autonomy);
-  return str; // freed latter
+static inline void log_vehicle(Vehicles *v, size_t i) {
+  char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 4));
+  sprintf(str, L_INFO "Registered Vehicle ->\t%s\t%s\t%f\t%u",
+          (&v->data[i])->id, (&v->data[i])->type, (&v->data[i])->price,
+          (&v->data[i])->autonomy);
+  log_to_file(str);
+  free(str);
 }
 
 static inline void list_vehicle_by_ptr(Vehicle *v_id) {
   printf("%s\t%s\t%f\t%u\n", v_id->id, v_id->type, v_id->price, v_id->autonomy);
 }
 
-static inline char *list_vehicle_by_ptr_str(Vehicle *v_id) {
-  char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 3));
-  sprintf(str, "%s\t%s\t%f\t%u\n", v_id->id, v_id->type, v_id->price,
-          v_id->autonomy);
-  return str; // free latter
+static inline char *log_vehicle_by_ptr(Vehicle *v_id) {
+  char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 4));
+  sprintf(str, L_INFO "Registered vehicle ->\t%s\t%s\t%f\t%u", v_id->id,
+          v_id->type, v_id->price, v_id->autonomy);
+  log_to_file(str);
+  free(str);
 }
 
 static inline uint8_t vehicle_build_prompt(Vehicles *v) {
@@ -143,9 +146,8 @@ static inline uint8_t vehicle_build_prompt(Vehicles *v) {
 
   // all inputs are verified at this point
   vec_vehicles_push(v, vehicle_build(id, type, price, autonomy));
-  LOG_INFO("registered vehicle");
-  log_to_file(log = (list_vehicle_str(v, (v->len) - 1)));
-  free(log);
+  LOG_INFO_NW("Registered vehicle");
+  log_vehicle(v, (v->len) - 1);
   free(id);
   free(type);
   return 0;
@@ -337,16 +339,18 @@ void input_switch(Vehicles *v, Orders *o) {
   case '9':
     break;
   case 'c':
-    system("clear");
     menu(v, o);
     break;
   case 'm':
+
     menu(v, o);
     break;
   case 'e':
+
     // LOG EXIT
     return;
   case 'q':
+
     // LOG EXIT
     return;
   default:
@@ -358,6 +362,9 @@ void input_switch(Vehicles *v, Orders *o) {
 }
 
 void menu(Vehicles *v, Orders *o) {
+  system("clear");
+  if (read_data_err(v, o))
+    LOG_WARN("continuing without data!");
   menu_print();
   input_switch(v, o);
 }

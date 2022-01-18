@@ -15,7 +15,7 @@ typedef struct Vehicle {
   char *type;
   float price;
   uint32_t autonomy;
-  bool active; // control associated orders when removing, 1 important byte!
+  bool active; // control when removing, 1 important byte!
 } Vehicle;
 
 typedef struct Order {
@@ -37,4 +37,7 @@ Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
 
 // bool validate_order(Order *v);
 void clean_stdin();
+
+//! funtions definitions on dyn_alloc.h
+
 #endif // __TP_H__
