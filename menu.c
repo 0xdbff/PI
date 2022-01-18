@@ -277,6 +277,8 @@ static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
 }
 
 static inline void vehicle_plan(Vehicle *v_id, Orders *o) {
+  if (v_id == NULL)
+    return;
   size_t t = 0;
   uint32_t a = v_id->autonomy;
   for (size_t i = 0; i < o->len; i++) {
@@ -346,7 +348,9 @@ void input_switch(Vehicles *v, Orders *o) {
     menu(v, o);
     break;
   case 'e':
-
+    if (write_data_err(v, o))
+      LOG_ERRNO(2);
+    exit(2);
     // LOG EXIT
     return;
   case 'q':

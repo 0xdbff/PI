@@ -27,9 +27,9 @@ void vec_orders_expand(Orders *v) {
     perror("not able to expand vector on memory!");
     exit(1);
   }
-  for (size_t i = 0; i < v->len; i++) {
+  for (size_t i = 0; i < v->len; i++)
     new_array[i] = v->data[i];
-  }
+
   free(v->data);
   v->data = new_array;
   v->capacity = new_capacity;
@@ -46,9 +46,9 @@ Order *vec_orders_get(Orders *v, size_t idx) {
 
 void vec_orders_push(Orders *v, Order *value) {
   assert(v);
-  if (v->len == v->capacity) {
+  if (v->len == v->capacity)
     vec_orders_expand(v);
-  }
+
   v->data[v->len++] = *value;
 }
 
@@ -60,9 +60,9 @@ void vec_orders_halve(Orders *v) {
     perror("not able to halve vector on memory!");
     exit(1);
   }
-  for (size_t i = 0; i < v->len; i++) {
+  for (size_t i = 0; i < v->len; i++)
     new_array[i] = v->data[i];
-  }
+
   free(v->data);
   v->data = new_array;
   v->capacity = new_capacity;
@@ -100,12 +100,12 @@ void vec_orders_push_at(Orders *v, size_t i, Order *value) {
     perror("Out of index!");
     abort();
   }
-  if (v->len == v->capacity) {
+  if (v->len == v->capacity)
     vec_orders_expand(v);
-  }
-  for (size_t x = v->len; x > i; x--) {
+
+  for (size_t x = v->len; x > i; x--)
     v->data[x] = v->data[x - 1];
-  }
+
   v->data[i] = *value;
   v->len++;
 }
@@ -116,21 +116,12 @@ void vec_orders_rm_at(Orders *v, size_t i) {
     perror("Out of index!");
     abort();
   }
-  for (size_t x = i + 1; x < v->len; x++) {
+  for (size_t x = i + 1; x < v->len; x++)
     v->data[x - 1] = v->data[x];
-  }
-  v->len--;
-  if (v->len < v->capacity / 4) {
-    vec_orders_halve(v);
-  }
-}
 
-void vec_orders_clear(Orders *v) {
-  assert(v);
-  v->len = 0;
-  while (v->capacity > V_ALLOC) {
+  v->len--;
+  if (v->len < v->capacity / 4)
     vec_orders_halve(v);
-  }
 }
 
 void vec_orders_reset(Orders *v) {

@@ -2,14 +2,13 @@
 
 // static definitions could hide the validation proccess from other libs, the
 // program is insecure since pointers are given with memory that's not read
-// only, so "full" control is granted, thats why these definitions are extern
-// "public", data validation should be managed differently in a more secure
-// environment, data modification would be statically called here, given
-// pointers to other libs should point only to allocated temporary structs, not
-// "all" data the program has, if thats nedded then the const modifier would
-// have to be considered in some places to avoid security issues. clones and
-// read only memory managed at some degree of control, as the project grows some
-// areas are not meant to be accessable from others.
+// only, so "full" control is granted, data validation should be managed
+// differently in a more secure environment, given pointers to other libs should
+// point only to allocated temporary structs, not "all" data the program has, if
+// thats nedded then the const modifier would have to be considered in some
+// places to avoid security issues. clones and read only memory managed at some
+// degree of control, as the project grows some areas are not meant to be
+// accessable from others.
 
 size_t assign_oid(Orders *v) {
   // return (v->len)+1; // v->len is dynamic so..., this doesn't work at all
@@ -59,6 +58,8 @@ static inline uint8_t invalidate_distance(uint32_t *distance) {
 }
 
 static inline size_t calculate_dst(Vehicle *v_id, Orders *o) {
+  if (v_id->active == false)
+    return 0;
   size_t distance_needed = 0;
   for (size_t i = 0; i < o->len; i++) {
     if (v_id == (&o->data[i])->v_id)
@@ -81,8 +82,9 @@ static inline Vehicle *search_vehicle_by_type(Vehicles *v, const char *type,
 Vehicle *assign_vid(Vehicles *v, Orders *o, Vehicle *v_id,
                     const uint32_t distance) {
   uint32_t distance_needed = distance;
-  if ((distance_needed += calculate_dst(v_id, o)) <= v_id->autonomy)
+  if ((distance_needed += calculate_dst(v_id, o)) <= v_id->autonomy) {
     return v_id;
+  }
   // try find another vehicle with the same type
   Vehicle *temp = v_id;
   for (size_t i = 0; v_id != NULL;
@@ -96,20 +98,32 @@ Vehicle *assign_vid(Vehicles *v, Orders *o, Vehicle *v_id,
   return NULL;
 }
 
-Order *validate_order(Vehicles *v, Orders *o, Order *oid) {
-  if (oid->id < assign_order(o))
-    return NULL;
-  if (invalidate_nif(oid->nif))
-    return NULL;
-  if (invalidate_time(oid->time))
-    return NULL;
-  if (invalidate_distance(oid->distance))
-    return NULL;
+bool invalidate_order(Vehicles *v, Orders *o, Order *oid) {
+  if (oid->v_id == NULL) {
+    free(oid);
+    return true;
+  }
+  if (oid->id < assign_oid(o) || invalidate_nif(&oid->nif) ||
+      invalidate_time(&oid->time) || invalidate_distance(&oid->distance)) {
+    free(oid);
+    return true;
+  }
   Vehicle *vid = assign_vid(v, o, oid->v_id, oid->distance);
-  if (vid == NULL)
-    return NULL;
+  if (vid == NULL) {
+    free(oid);
+    return true;
+  }
   oid->v_id = vid;
   if (vid->active == false)
     vid->active = true;
-  return oid;
+  return false;
+}
+
+bool invalidate_vehicle(Vehicles *v, Vehicle *vid) {
+  if (vehicle_id_exists(v, vid->id) || invalidate_price(&vid->price) ||
+      invalidate_autonomy(&vid->autonomy)) {
+    free(vid);
+    return true;
+  }
+  return false;
 }

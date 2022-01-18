@@ -41,6 +41,7 @@ Vehicles *vec_vehicles_new();
 Vehicle *vec_vehicles_get(Vehicles *, size_t idx);
 size_t vec_vehicles_len(Vehicles *);
 bool vec_vehicles_is_empty(Vehicles *);
+void vec_vehicles_reset(Vehicles *v);
 void vec_vehicles_expand(Vehicles *);
 void vec_vehicles_halve(Vehicles *);
 void vec_vehicles_push(Vehicles *, Vehicle *);
@@ -52,8 +53,6 @@ void vec_vehicles_destroy(Vehicles *);
 void menu(Vehicles *, Orders *);
 Order *search_order_by_id(Orders *v, const size_t id);
 Vehicle *search_vehicle_by_id(Vehicles *v, const char *id);
-Vehicle *validate_order(Vehicles *v, Orders *o, Vehicle *v_id,
-                        const uint32_t distance);
 
 uint8_t read_data_err(Vehicles *, Orders *);
 uint8_t write_data_err(Vehicles *, Orders *);
