@@ -276,10 +276,14 @@ static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
 }
 
 static inline void vehicle_plan(Vehicle *v_id, Orders *o) {
-  if (v_id == NULL)
+  if (v_id == NULL) {
     return;
+  }
   size_t t = 0;
   uint32_t a = v_id->autonomy;
+  printf("%p\n", (&o->data[2])->v_id);
+  printf("%s\n", ((&o->data[2])->v_id)->id);
+  printf("%f\n", ((&o->data[2])->v_id)->price);
   for (size_t i = 0; i < o->len; i++) {
     if (v_id == (&o->data[i])->v_id) {
       printf("%lu\t%lu\t%lu\t%lu\t%u\t%s\n", (&o->data[i])->id,
@@ -365,6 +369,36 @@ void menu(Vehicles *v, Orders *o) {
   system("clear");
   if (read_data_err(v, o))
     LOG_WARN("continuing without data!");
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_vehicles_expand(v);
+  vec_orders_expand(v);
+  printf("%lu\n", v->capacity);
+  printf("%lu\n", v->len);
   menu_print();
   input_switch(v, o);
 }

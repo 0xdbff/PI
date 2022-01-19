@@ -20,8 +20,8 @@ typedef struct Vehicle {
 
 typedef struct Order {
   size_t id;
-  size_t nif; // 2**32 is not enough for the world's population
-  Vehicle *v_id;
+  size_t nif;    // 2**32 is not enough for the world's population
+  Vehicle *v_id; //! LOGIC ERROR
   uint32_t time;
   uint32_t distance;
 } Order;
