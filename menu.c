@@ -21,7 +21,7 @@ static inline void prompt_vid(char *input) {
   printf("insira o id de veiculo: ");
   while (scanf("%s", input) != 1) {
     clean_stdin(); // fflush(stdin) is bad practice;
-    LOG_ERR("Valor introduzido nao validado, reintroduza\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza!");
     printf("insira o id de veiculo: ");
   }
 }
@@ -30,7 +30,7 @@ static inline void prompt_type(char *input) {
   printf("insira o tipo de veiculo: ");
   while (scanf("%s", input) != 1) {
     clean_stdin();
-    LOG_ERR("Valor introduzido nao validado, reintroduza\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza!");
     printf("insira o tipo de veiculo: ");
   }
 }
@@ -39,7 +39,7 @@ static inline void prompt_price(float *input) {
   printf("insira o preco/min: ");
   while (scanf("%f", input) != 1) {
     clean_stdin();
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza!");
     printf("insira o preco/min: ");
   }
 }
@@ -48,7 +48,7 @@ static inline void prompt_autonomy(uint32_t *input) {
   printf("insira a autonomia do veiculo: ");
   while (scanf("%u", input) != 1) {
     clean_stdin();
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza!");
     printf("insira a autonomia do veiculo: ");
   }
 }
@@ -57,7 +57,7 @@ static inline void prompt_oid(size_t *input) {
   printf("insira o id: ");
   while (scanf("%lu", input) != 1) {
     clean_stdin();
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza!");
     printf("insira o id: ");
   }
 }
@@ -66,7 +66,7 @@ static inline void prompt_nif(size_t *input) {
   printf("insira o nif: ");
   while (scanf("%lu", input) != 1) {
     clean_stdin();
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza!");
     printf("insira o nif: ");
   }
 }
@@ -75,7 +75,7 @@ static inline void prompt_time(uint32_t *input) {
   printf("insira o tempo de uso: ");
   while (scanf("%u", input) != 1) {
     clean_stdin();
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza!");
     printf("insira o tempo de uso: ");
   }
 }
@@ -84,7 +84,7 @@ static inline void prompt_distance(uint32_t *input) {
   printf("insira a distancia: ");
   while (scanf("%u", input) != 1) {
     clean_stdin();
-    LOG_ERR("Valor introduzido nao validado, reintroduza!\n");
+    LOG_ERR("Valor introduzido nao validado, reintroduza!");
     printf("insira a distancia: ");
   }
 }
@@ -96,9 +96,8 @@ static inline void list_vehicle(Vehicles *v, size_t i) {
 
 static inline void log_vehicle(Vehicles *v, size_t i) {
   char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 4));
-  sprintf(str, L_INFO "Registered Vehicle ->\t%s\t%s\t%f\t%u",
-          (&v->data[i])->id, (&v->data[i])->type, (&v->data[i])->price,
-          (&v->data[i])->autonomy);
+  sprintf(str, L_INFO "Registered Vehicle ->%s|%s|%f|%u|", (&v->data[i])->id,
+          (&v->data[i])->type, (&v->data[i])->price, (&v->data[i])->autonomy);
   log_to_file(str);
   free(str);
 }
@@ -109,7 +108,7 @@ static inline void list_vehicle_by_ptr(Vehicle *v_id) {
 
 static inline char *log_vehicle_by_ptr(Vehicle *v_id) {
   char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 4));
-  sprintf(str, L_INFO "Registered vehicle ->\t%s\t%s\t%f\t%u", v_id->id,
+  sprintf(str, L_INFO "Registered vehicle ->\t%s;%s;%f;%u", v_id->id,
           v_id->type, v_id->price, v_id->autonomy);
   log_to_file(str);
   free(str);

@@ -127,7 +127,6 @@ void vec_orders_rm_at(Orders *v, size_t i) {
 
 void vec_orders_reset(Orders *v) {
   assert(v);
-  Vehicles *rm_ptr = v; // duplicate ptr
-  vec_orders_destroy(rm_ptr);
+  vec_orders_destroy(v);
   v = vec_orders_new();
 }
