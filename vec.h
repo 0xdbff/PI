@@ -29,6 +29,7 @@ Orders *vec_orders_new();
 Order *vec_orders_get(Orders *v, size_t idx);
 size_t vec_orders_len(Orders *);
 bool vec_orders_is_empty(Orders *);
+void vec_orders_reset(Orders *v);
 void vec_orders_change_at(Orders *, size_t, Order *);
 void vec_orders_rm_at(Orders *, size_t);
 void vec_orders_push_at(Orders *, size_t, Order *);

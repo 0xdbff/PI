@@ -341,16 +341,13 @@ void input_switch(Vehicles *v, Orders *o) {
   case '9':
     break;
   case 'c':
-    menu(v, o);
-    break;
-  case 'm':
-
-    menu(v, o);
+    system("clear");
+    menu_print(v, o);
+    input_switch(v, o);
     break;
   case 'e':
     if (write_data_err(v, o))
-      LOG_ERRNO(2);
-    exit(2);
+      exit(2);
     // LOG EXIT
     return;
   case 'q':

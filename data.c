@@ -1,3 +1,4 @@
+#include "validation.h"
 #include "vec.h"
 
 static inline uint8_t read_vehicles(Vehicles *v) {
@@ -10,7 +11,6 @@ static inline uint8_t read_vehicles(Vehicles *v) {
   char *line = NULL;
   size_t len;
   ssize_t read;
-  puts("reached this state");
 
   char *id = malloc(sizeof(char) * VEHICLE_ID_MAX_CHARS);
   char *type = malloc(sizeof(char) * VEHICLE_TYPE_MAX_CHARS);
@@ -49,9 +49,10 @@ static inline uint8_t read_vehicles(Vehicles *v) {
 }
 
 static inline uint8_t write_vehicles(Vehicles *v) {
-  FILE *fp = fopen("./data/vehicles.tsv", "w+");
-  if (ferror(fp)) {
-    LOGF_ERR("Vehicles not written!")
+  FILE *fp;
+  if ((fp = fopen("./data/vehicles.tsv", "w+")) == NULL) {
+    LOG_ERRNO(2);
+    LOG_WARN_R("Vehicles not written!")
     return 2;
   }
   for (size_t i = 0; i < v->len; i++) {
@@ -92,14 +93,14 @@ static inline uint8_t read_orders(Vehicles *v, Orders *o) {
     Order *data = order_build(id, nif, v_id, time, distance);
     printf("%lu\t%lu\t%s\t%p\t%u\t%u\n", id, nif, v_id_str, v_id, time,
            distance);
-    /* if (invalidate_order(v, o, data)) { */
-    /*   LOGF_ERR("Corrupted Orders file, not read!"); */
-    /*   vec_orders_reset(v); */
-    /*   free(line); */
-    /*   free(v_id_str); */
-    /*   fclose(fp); */
-    /*   return 1; */
-    /* } */
+    if (invalidate_order(v, o, data)) {
+      LOGF_ERR("Corrupted Orders file, not read!");
+      vec_orders_reset(v);
+      free(line);
+      free(v_id_str);
+      fclose(fp);
+      return 1;
+    }
     vec_orders_push(o, data);
   }
 
@@ -110,9 +111,10 @@ static inline uint8_t read_orders(Vehicles *v, Orders *o) {
 }
 
 static inline uint8_t write_orders(Orders *v) {
-  FILE *fp = fopen("./data/orders.tsv", "w+");
-  if (ferror(fp)) {
-    LOGF_ERR("Orders not written!");
+  FILE *fp;
+  if ((fp = fopen("./data/orders.tsv", "w+")) == NULL) {
+    LOG_ERRNO(2);
+    LOG_WARN_R("Orders not written!");
     return 2;
   }
   for (size_t i = 0; i < v->len; i++) {
@@ -124,15 +126,13 @@ static inline uint8_t write_orders(Orders *v) {
 }
 
 uint8_t read_data_err(Vehicles *v, Orders *o) {
-  if (read_vehicles(v))
-    return 1;
-  if (read_orders(v, o))
+  if (read_vehicles(v) | read_orders(v, o))
     return 1;
   return 0;
 }
 
 uint8_t write_data_err(Vehicles *v, Orders *o) {
-  if (write_vehicles(v) || write_orders(o))
+  if (write_vehicles(v) | write_orders(o))
     return 1;
   return 0;
 }

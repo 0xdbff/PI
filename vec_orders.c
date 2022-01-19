@@ -3,20 +3,21 @@
 Orders *vec_orders_new() {
   Orders *v = (Orders *)malloc(sizeof(Orders));
   if (v == NULL) {
-    goto error;
+    return NULL;
+    // log
   }
   v->len = 0;
   v->capacity = V_ALLOC;
   v->data = (Order *)malloc(sizeof(Order) * v->capacity);
   if (v->data == NULL) {
-    goto error;
+    return NULL;
+    // log
   }
   return v;
 
-error:
-  //  LOG_STRERR_EXIT("alooc problenns", 12)
-  //  !TODO
-  return;
+  // error:
+  //   LOG_STRERR_EXIT("alooc problenns", 12)
+  //   !TODO
 }
 
 void vec_orders_expand(Orders *v) {
