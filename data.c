@@ -40,8 +40,9 @@ static inline uint8_t read_vehicles(Vehicles *v) {
     vec_vehicles_push(v, data);
   }
 
-  if (line)
+  if (line) {
     free(line);
+  }
   free(id);
   free(type);
   fclose(fp);
@@ -60,6 +61,7 @@ static inline uint8_t write_vehicles(Vehicles *v) {
             (&v->data[i])->price, (&v->data[i])->autonomy);
   }
   fclose(fp);
+  return 0;
 }
 
 static inline uint8_t read_orders(Vehicles *v, Orders *o) {
@@ -83,7 +85,7 @@ static inline uint8_t read_orders(Vehicles *v, Orders *o) {
     if (sscanf(line, "%lu\t%lu\t%s\t%u\t%u", &id, &nif, v_id_str, &time,
                &distance) != 5) {
       LOGF_ERR("Corrupted Orders file, not read!");
-      vec_orders_reset(v);
+      vec_orders_reset(o);
       free(line);
       free(v_id_str);
       fclose(fp);
@@ -95,7 +97,7 @@ static inline uint8_t read_orders(Vehicles *v, Orders *o) {
            distance);
     if (invalidate_order(v, o, data)) {
       LOGF_ERR("Corrupted Orders file, not read!");
-      vec_orders_reset(v);
+      vec_orders_reset(o);
       free(line);
       free(v_id_str);
       fclose(fp);
@@ -104,10 +106,12 @@ static inline uint8_t read_orders(Vehicles *v, Orders *o) {
     vec_orders_push(o, data);
   }
 
-  if (line)
+  if (line) {
     free(line);
+  }
   free(v_id_str);
   fclose(fp);
+  return 0;
 }
 
 static inline uint8_t write_orders(Orders *v) {
@@ -123,16 +127,19 @@ static inline uint8_t write_orders(Orders *v) {
             (&v->data[i])->distance);
   }
   fclose(fp);
+  return 0;
 }
 
 uint8_t read_data_err(Vehicles *v, Orders *o) {
-  if (read_vehicles(v) | read_orders(v, o))
+  if (read_vehicles(v) | read_orders(v, o)) {
     return 1;
+  }
   return 0;
 }
 
 uint8_t write_data_err(Vehicles *v, Orders *o) {
-  if (write_vehicles(v) | write_orders(o))
+  if (write_vehicles(v) | write_orders(o)) {
     return 1;
+  }
   return 0;
 }

@@ -106,10 +106,10 @@ static inline void list_vehicle_by_ptr(Vehicle *v_id) {
   printf("%s\t%s\t%f\t%u\n", v_id->id, v_id->type, v_id->price, v_id->autonomy);
 }
 
-static inline char *log_vehicle_by_ptr(Vehicle *v_id) {
+static inline void log_vehicle_by_ptr(Vehicle *v_id) {
   char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 4));
-  sprintf(str, L_INFO "Registered vehicle ->\t%s;%s;%f;%u", v_id->id,
-          v_id->type, v_id->price, v_id->autonomy);
+  sprintf(str, L_INFO "Registered Vehicle ->%s|%s|%f|%u|", v_id->id, v_id->type,
+          v_id->price, v_id->autonomy);
   log_to_file(str);
   free(str);
 }
@@ -266,11 +266,13 @@ static inline void list_orders(Orders *v) {
 // 09
 static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
   size_t input = 0;
-  if (scanf("%lu", &input) != 1)
+  if (scanf("%lu", &input) != 1) {
     return 5;
+  }
   Order *o = search_order_by_id(v, input);
-  if (o == NULL)
+  if (o == NULL) {
     return 61;
+  }
   printf("%f", ((o->v_id)->price) * (o->time));
   return 0;
 }
@@ -366,39 +368,10 @@ void input_switch(Vehicles *v, Orders *o) {
 }
 
 void menu(Vehicles *v, Orders *o) {
-  system("clear");
-  if (read_data_err(v, o))
+  /* system("clear"); */
+  if (read_data_err(v, o)) {
     LOG_WARN("continuing without data!");
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_vehicles_expand(v);
-  vec_orders_expand(v);
-  printf("%lu\n", v->capacity);
-  printf("%lu\n", v->len);
+  }
   menu_print();
   input_switch(v, o);
 }
