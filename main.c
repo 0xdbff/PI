@@ -30,12 +30,13 @@ void err_exit(Vehicles *v, Orders *o) {
 }
 
 int main(int argc, const char **argv) {
+  all_tests();
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
 
-  vec_vehicles_reset(v);
+  /* vec_vehicles_reset(v); */
 
-  // // CLI
+  /* // // CLI */
   if (argv[1] != NULL) {
     printf("%s\n", argv[1]);
     if (argv[2] != NULL)
@@ -48,8 +49,9 @@ int main(int argc, const char **argv) {
 
   // cli(v,o)
   // TUI "text user interface"
-  menu(v, o);
+  /* menu(v, o); */
 
   vec_orders_destroy(o);
   vec_vehicles_destroy(v);
+  return 0;
 }
