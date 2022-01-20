@@ -24,7 +24,7 @@ typedef struct Log { // never constructed, no time! \:
 #define L_SUCMD "|SUCMD|\t" // as super user
 #define L_FATAL "|FATAL|\t" // exiting errors reported
 #define L_PANIC "|PANIC|\t" // when a FATAL log is not reported, logged latter
-#define L_DEBUG "|DEBUG|\t" // used for development
+#define L_DEBUG "|DEBUG|\t" // used for development, need callback functions btw
 #define L_TEST "|TEST |\t"  // production tests
 #define L_TRACE "|TRACE|\t" // detailed steps of an operation
 #endif                      // L_ERR // log to files
@@ -39,7 +39,6 @@ typedef struct Log { // never constructed, no time! \:
 #endif // LC_ERR // log to terminal
 
 void log_to_file(const char *str);
-void log_errno_to_file(const uint8_t err);
 
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \

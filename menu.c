@@ -372,6 +372,9 @@ void menu(Vehicles *v, Orders *o) {
   if (read_data_err(v, o)) {
     LOG_WARN("continuing without data!");
   }
+  for (size_t i = 0; i < 10; i++) {
+    vec_vehicles_push(v, vehicle_build("M_12", "carro", 3.5, 2));
+  }
   menu_print();
   input_switch(v, o);
 }
