@@ -1,8 +1,10 @@
 #ifndef __LOG_H__
 #define __LOG_H__
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #ifndef L_PATH
@@ -33,11 +35,11 @@ typedef struct Log { // never constructed, no time! \:
 #define LC_WARN "\033[93m|WARN |\t"
 #define LC_WARN_R "\033[91m|WARN |\t"
 #define LC_INFO "\033[92m|INFO |\t"
-#define LC_FATAL "\033[91m|FATAL|\t"
 #define LC_RESET "\033[0m"
 #endif // LC_ERR // log to terminal
 
 void log_to_file(const char *str);
+void log_errno_to_file(const uint8_t err);
 
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \
@@ -74,7 +76,7 @@ void log_to_file(const char *str);
 
 #ifndef LOG_FATAL
 #define LOG_ERRNO_EXIT(ERRNO)                                                  \
-  log_to_file(L_FATAL strerror(ERRNO));                                        \
+  log_errno_to_file(ERRNO);                                                    \
   fprintf(stderr, LC_FATAL "exit(%d) : %s!" LC_RESET, ERRNO, strerror(ERRNO)); \
   exit(ERRNO);
 
