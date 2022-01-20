@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define _tstart puts("-----Starting tests!-----");
+
 #define _tfail(STR) printf("!!!-TEST-FAILED--->%s\n", STR);
 #define _tpass(STR) printf("!!!-TEST-PASSED--->%s\n", STR);
 
@@ -21,18 +23,16 @@
 #define _tbench_stop                                                           \
   float end_t = (float)clock() / CLOCKS_PER_SEC;                               \
   float bench = end_t - start_t;
-#define _tbench_print(STR) printf("!===BENCH FOR %s===>%fseg\n", STR, bench);
 
-#define _tstart                                                                \
-  puts("-----Starting tests!-----");                                           \
-  char *msg = NULL;
+#define _tbench_print(STR) printf("!===BENCH FOR %s===>%fseg\n", STR, bench);
 
 #define _assert_fn(TEST, MSG)                                                  \
   if (!TEST) {                                                                 \
     LOG_ERR(MSG);                                                              \
     _tfail(MSG);                                                               \
   }                                                                            \
-  _tpass(MSG) :
+  _tpass(MSG);
+
 // exits on failure
 #define _assert(TEST, MSG)                                                     \
   if (!TEST) {                                                                 \

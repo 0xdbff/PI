@@ -266,11 +266,13 @@ static inline void list_orders(Orders *v) {
 // 09
 static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
   size_t input = 0;
-  if (scanf("%lu", &input) != 1)
+  if (scanf("%lu", &input) != 1) {
     return 5;
+  }
   Order *o = search_order_by_id(v, input);
-  if (o == NULL)
+  if (o == NULL) {
     return 61;
+  }
   printf("%f", ((o->v_id)->price) * (o->time));
   return 0;
 }
