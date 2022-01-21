@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#define V_ALLOC 64
+#define V_ALLOC 256
 // A contiguos growable array type "vector"
 // +------+----------+---------+
 // | size | capacity | data[]  |

@@ -163,18 +163,20 @@ static inline void cancel_vehicle_plan(Vehicle *v_id, Orders *v) {
 
 static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v, Orders *o) {
   char *input = malloc(VEHICLE_ID_MAX_CHARS);
-  if (scanf("%s", input) != 1) {
-    free(input);
-    return 5; // io error
-  }
+  char verify;
+  prompt_vid(input);
   for (size_t i = 0; i < v->len; i++) {
     if ((strcmp(input, (&v->data[i])->id)) == 0) {
       if ((&v->data[i])->active == true) {
         LOG_WARN("existem ordens dependentes do veiculo que pretende remover!, "
-                 "cancelar Ordens?");
+                 "cancelar Ordens? (y/n) ");
+        clean_stdin();
+        scanf("%c", &verify);
+        if (verify == 'y') {
+          // search for orders that need to be canceled
+          cancel_vehicle_plan(&v->data[i], o);
+        }
       }
-      // search for orders that need to be canceled
-      /* cancel_vehicle_plan(&v->data[i], o); */
       vec_vehicles_rm_at(v, i);
       free(input);
       return 0;
@@ -236,13 +238,17 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
   return 0;
 }
 
-static inline uint8_t rm_order_by_id(Orders *v, size_t input) {
+static inline uint8_t rm_order_by_id_prompt(Orders *v) {
+  size_t input;
+  prompt_oid(&input);
   for (size_t i = 0; i < v->len; i++) {
     if (input == (&v->data[i])->id) {
       vec_orders_rm_at(v, i);
+      puts("order removed");
       return 0;
     }
   }
+  puts("nothing found");
   return 1;
 }
 
@@ -319,18 +325,16 @@ void input_switch(Vehicles *v, Orders *o) {
 
   switch (input) {
   case '1':
-    status = vehicle_build_prompt(v); // always evaluates to 0
+    vehicle_build_prompt(v);
     break;
   case '2':
-    /* status = rm_vehicle_by_id(v, prompt_oid_get()); */
-    /* if (status == 0) { */
-    /*   cancel_vehicle_plan(); */
-    /* } */
+    rm_vehicle_by_id_prompt(v, o);
     break;
   case '3':
-    status = order_build_prompt(o, v); // always evaluates to 0
+    order_build_prompt(o, v);
     break;
   case '4':
+    rm_order_by_id_prompt(o);
     break;
   case '5':
     list_vehicles(v);
@@ -356,7 +360,6 @@ void input_switch(Vehicles *v, Orders *o) {
     // LOG EXIT
     return;
   case 'q':
-
     // LOG EXIT
     return;
   default:
@@ -371,9 +374,6 @@ void menu(Vehicles *v, Orders *o) {
   /* system("clear"); */
   if (read_data_err(v, o)) {
     LOG_WARN("continuing without data!");
-  }
-  for (size_t i = 0; i < 10; i++) {
-    vec_vehicles_push(v, vehicle_build("M_12", "carro", 3.5, 2));
   }
   menu_print();
   input_switch(v, o);
