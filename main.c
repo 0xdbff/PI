@@ -24,7 +24,7 @@ Order *order_build(const size_t id, const size_t nif, char *v_id,
   return o;
 }
 
-void err_exit(int errno, Vehicles *v, Orders *o) {
+void _exit(int errno, Vehicles *v, Orders *o) {
   LOG_INFO("exit");
   if (errno) {
     LOG_ERRNO(errno);
@@ -44,9 +44,4 @@ int main(int argc, const char **argv) {
 
   // TUI "text user interface"
   menu(v, o);
-
-  LOG_INFO("exit");
-  vec_orders_destroy(o);
-  vec_vehicles_destroy(v);
-  return 0;
 }

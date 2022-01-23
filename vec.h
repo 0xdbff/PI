@@ -53,4 +53,7 @@ Vehicle *search_vehicle_by_id(Vehicles *v, const char *id);
 
 uint8_t read_data_err(Vehicles *, Orders *);
 uint8_t write_data_err(Vehicles *, Orders *);
+
+void _exit(int errno, Vehicles *v, Orders *o);
+
 #endif

@@ -260,7 +260,7 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
     puts("Veiculo pretendido disponivel!");
   } else {
     puts("Veiculo pretendido nao disponivel!");
-    printf("Esta disponivel o veiculo %s do tipo %s", vid->id, vid->type);
+    printf("Esta disponivel o veiculo %s do tipo %s\n", vid->id, vid->type);
   }
   if (vid->active == false)
     vid->active = true;
@@ -394,11 +394,11 @@ void input_switch(Vehicles *v, Orders *o) {
     break;
   case 'e':
     if (write_data_err(v, o)) {
-      exit(2);
+      _exit(0, v, o);
     }
     return;
   case 'q':
-    return;
+    _exit(0, v, o);
   default:
     puts("caracter nao reconhecido!, reinsira");
     input_switch(v, o);
