@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define VEHICLE_ID_MAX_CHARS 32
+#define VEHICLE_TYPE_MAX_CHARS 48
+
 typedef struct Vehicle {
   char *id;
   char *type;
@@ -20,19 +23,17 @@ typedef struct Vehicle {
 
 typedef struct Order {
   size_t id;
-  size_t nif;    // 2**32 is not enough for the world's population
-  Vehicle *v_id; //! LOGIC ERROR
+  size_t nif; // 2**32 is not enough for the world's population
+  // Vehicle *v_id; //! LOGIC ERROR
+  char *v_id;
   uint32_t time;
   uint32_t distance;
 } Order;
 
-#define VEHICLE_ID_MAX_CHARS 32
-#define VEHICLE_TYPE_MAX_CHARS 48
-
 Vehicle *vehicle_build(const char *id, const char *type, const float price,
                        const uint32_t autonomy);
 
-Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
+Order *order_build(const size_t id, const size_t nif, char *v_id,
                    const uint32_t time, const uint32_t distance);
 
 // bool validate_order(Order *v);

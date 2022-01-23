@@ -110,15 +110,6 @@ void vec_vehicles_rm_at(Vehicles *v, size_t i) {
 
 void vec_vehicles_destroy(Vehicles *v) {
   assert(v);
-  // free strings;
-  for (size_t i = 0; i < v->len; i++) {
-    if ((&v->data[i])->id != NULL) {
-      free((&v->data[i])->id);
-    }
-    if ((&v->data[i])->type != NULL) {
-      free((&v->data[i])->type);
-    }
-  }
   free(v->data);
   free(v);
 }

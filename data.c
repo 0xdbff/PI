@@ -91,10 +91,7 @@ static inline uint8_t read_orders(Vehicles *v, Orders *o) {
       fclose(fp);
       return 1;
     }
-    Vehicle *v_id = search_vehicle_by_id(v, v_id_str);
-    Order *data = order_build(id, nif, v_id, time, distance);
-    printf("%lu\t%lu\t%s\t%p\t%u\t%u\n", id, nif, v_id_str, v_id, time,
-           distance);
+    Order *data = order_build(id, nif, v_id_str, time, distance);
     if (invalidate_order(v, o, data)) {
       LOGF_ERR("Corrupted Orders file, not read!");
       vec_orders_reset(o);
@@ -123,8 +120,7 @@ static inline uint8_t write_orders(Orders *v) {
   }
   for (size_t i = 0; i < v->len; i++) {
     fprintf(fp, "%lu\t%lu\t%s\t%u\t%u\n", (&v->data[i])->id, (&v->data[i])->nif,
-            ((&v->data[i])->v_id)->id, (&v->data[i])->time,
-            (&v->data[i])->distance);
+            (&v->data[i])->v_id, (&v->data[i])->time, (&v->data[i])->distance);
   }
   fclose(fp);
   return 0;

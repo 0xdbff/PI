@@ -79,8 +79,9 @@ static inline Vehicle *search_vehicle_by_type(Vehicles *v, const char *type,
   return NULL;
 }
 
-Vehicle *assign_vid(Vehicles *v, Orders *o, Vehicle *v_id,
+Vehicle *assign_vid(Vehicles *v, Orders *o, char *v_id_str,
                     const uint32_t distance) {
+  Vehicle *v_id = search_vehicle_by_id(v, v_id_str);
   uint32_t distance_needed = distance;
   if ((distance_needed += calculate_dst(v_id, o)) <= v_id->autonomy) {
     return v_id;
@@ -113,7 +114,7 @@ bool invalidate_order(Vehicles *v, Orders *o, Order *oid) {
     free(oid);
     return true;
   }
-  oid->v_id = vid;
+  oid->v_id = strdup(vid->id);
   if (vid->active == false)
     vid->active = true;
   return false;

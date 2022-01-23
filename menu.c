@@ -154,7 +154,7 @@ static inline uint8_t vehicle_build_prompt(Vehicles *v) {
 
 static inline void cancel_vehicle_plan(Vehicle *v_id, Orders *v) {
   for (size_t i = 0; i < v->len; i++) {
-    if (v_id == (&v->data[i])->v_id) {
+    if ((strcmp(v_id->id, (&v->data[i])->v_id)) == 0) {
       vec_orders_rm_at(v, i);
       i -= 1; // now data[i] has other order, so we have to check this
     }         // index again, v->len was updated
@@ -183,7 +183,7 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v, Orders *o) {
     }
   }
   free(input);
-  return 61; // no data found
+  return 1; // no data found
 }
 
 static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
@@ -221,7 +221,7 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
   }
 
   // at this point all inputs are verified!
-  Vehicle *vid = assign_vid(v, o, v_id, distance);
+  Vehicle *vid = assign_vid(v, o, v_id_str, distance);
   if (vid == NULL) {
     puts("Nao foi encontrado nenhum veiculo apto para a ordem pretendida.");
     return 1;
@@ -234,7 +234,7 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
   }
   if (vid->active == false)
     vid->active = true;
-  vec_orders_push(o, order_build(assign_oid(o), nif, vid, time, distance));
+  vec_orders_push(o, order_build(assign_oid(o), nif, vid->id, time, distance));
   return 0;
 }
 
@@ -264,22 +264,22 @@ static inline void list_vehicles(Vehicles *v) {
 static inline void list_orders(Orders *v) {
   for (size_t i = 0; i < v->len; i++) {
     printf("%lu\t%lu\t%s\t%u\t%u\n", (&v->data[i])->id, (&v->data[i])->nif,
-           ((&v->data[i])->v_id)->id, (&v->data[i])->time,
-           (&v->data[i])->distance);
+           (&v->data[i])->v_id, (&v->data[i])->time, (&v->data[i])->distance);
   }
 }
 
 // 09
-static inline uint8_t print_calculated_cost_prompt_id(Orders *v) {
+static inline uint8_t print_calculated_cost_prompt_id(Vehicles *v, Orders *o) {
   size_t input = 0;
   if (scanf("%lu", &input) != 1) {
     return 5;
   }
-  Order *o = search_order_by_id(v, input);
-  if (o == NULL) {
+  Order *oid = search_order_by_id(o, input);
+  if (oid == NULL) {
     return 61;
   }
-  printf("%f", ((o->v_id)->price) * (o->time));
+  Vehicle *v_id = search_vehicle_by_id(v, oid->id);
+  printf("%f", (v_id->price) * (oid->time));
   return 0;
 }
 
@@ -289,11 +289,8 @@ static inline void vehicle_plan(Vehicle *v_id, Orders *o) {
   }
   size_t t = 0;
   uint32_t a = v_id->autonomy;
-  printf("%p\n", (&o->data[2])->v_id);
-  printf("%s\n", ((&o->data[2])->v_id)->id);
-  printf("%f\n", ((&o->data[2])->v_id)->price);
   for (size_t i = 0; i < o->len; i++) {
-    if (v_id == (&o->data[i])->v_id) {
+    if ((strcmp(v_id->id, (&o->data[i])->v_id)) == 0) {
       printf("%lu\t%lu\t%lu\t%lu\t%u\t%s\n", (&o->data[i])->id,
              (&o->data[i])->nif, t, t + (&o->data[i])->time, a, v_id->id);
       a -= (&o->data[i])->distance;

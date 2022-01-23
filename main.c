@@ -12,7 +12,7 @@ Vehicle *vehicle_build(const char *id, const char *type, const float price,
   return v;
 }
 
-Order *order_build(const size_t id, const size_t nif, Vehicle *v_id,
+Order *order_build(const size_t id, const size_t nif, char *v_id,
                    const uint32_t time, const uint32_t distance) {
   Order *o = malloc(sizeof(Order));
   o->id = id;
