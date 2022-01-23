@@ -39,6 +39,7 @@ typedef struct Log { // never constructed, no time! \:
 #endif // LC_ERR // log to terminal
 
 void log_to_file(const char *str);
+void log_errno_to_file(const uint8_t err);
 
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \

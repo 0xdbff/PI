@@ -1,0 +1,72 @@
+23-01-22 12:27:51	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 12:36:50	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 12:37:14	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 12:38:10	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 12:39:08	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 12:48:10	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 12:52:07	No such file or directory
+23-01-22 12:52:07	|WARN |	Vehicles not read!
+23-01-22 12:52:07	No such file or directory
+23-01-22 12:52:07	|WARN |	Orders not read!
+23-01-22 12:52:07	|WARN |	continuing without data!
+23-01-22 12:53:37	No such file or directory
+23-01-22 12:53:37	|WARN |	Vehicles not read!
+23-01-22 12:53:37	No such file or directory
+23-01-22 12:53:37	|WARN |	Orders not read!
+23-01-22 12:53:37	|WARN |	continuing without data!
+23-01-22 12:53:48	|INFO |	Registered Vehicle ->a|s|1.000000|1|
+23-01-22 12:53:54	|INFO |	Registered Vehicle ->q|s|2.000000|2|
+23-01-22 12:53:59	|INFO |	Registered Vehicle ->j|k|3.000000|3|
+23-01-22 12:54:58	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 12:57:25	No such file or directory
+23-01-22 12:57:25	|WARN |	Vehicles not read!
+23-01-22 12:57:25	No such file or directory
+23-01-22 12:57:25	|WARN |	Orders not read!
+23-01-22 12:57:25	|WARN |	continuing without data!
+23-01-22 12:57:33	|INFO |	Registered Vehicle ->j|j|2.000000|4|
+23-01-22 12:57:43	|INFO |	Registered Vehicle ->g|j|2.000000|489|
+23-01-22 12:57:50	|INFO |	Registered Vehicle ->y|23|35.000000|326|
+23-01-22 12:58:31	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 12:59:45	|INFO |	Registered Vehicle ->o|o|2.000000|3|
+23-01-22 13:00:50	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 13:07:19	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 15:55:19	|INFO |	Registered Vehicle ->3|4|3.000000|4|
+23-01-22 15:57:15	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 16:15:44	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 16:17:09	|WARN |	existem ordens dependentes do veiculo que pretende remover!, cancelar Ordens? (y/n) 
+23-01-22 16:50:03	|INFO |	Registered Vehicle ->3|4|5.000000|6|
+23-01-22 18:23:41	|INFO |	Registered Vehicle ->j|j|2.000000|3|
+23-01-22 18:26:56	|INFO |	Registered Vehicle ->j|j|2.000000|3|
+23-01-22 18:26:58	|INFO |	Vehicle removed
+23-01-22 18:27:19	|INFO |	Order removed
+23-01-22 18:27:30	|INFO |	Registered Vehicle ->j|k|2.000000|4|
+23-01-22 18:42:25	|INFO |	exit
+23-01-22 18:44:15	|INFO |	Registered Vehicle ->j|j|2.000000|3|
+23-01-22 18:44:17	|INFO |	Vehicles removed
+23-01-22 18:45:39	exit
+23-01-22 18:47:15	|INFO |	Registered Vehicle ->1111111111|2|4.000000|6|
+23-01-22 18:47:34	exit
+23-01-22 18:47:58	exit
+23-01-22 18:51:05	|INFO |	Registered Vehicle ->1|1|1.000000|1|
+23-01-22 18:51:06	|INFO |	Vehicles removed
+23-01-22 18:51:11	|INFO |	Order removed
+23-01-22 18:51:16	|INFO |	Order removed
+23-01-22 18:51:19	exit
+23-01-22 18:51:29	exit
+23-01-22 19:02:46	exit
+23-01-22 19:03:50	|INFO |	Registered Vehicle ->17|22222222|M_3|4|5|
+23-01-22 19:03:51	exit
+|FATAL|	23-01-22 19:05:38	No such file or directory
+23-01-22 19:05:41	|INFO |	exit
+23-01-22 19:06:50	 |FATAL|	No such file or directory
+23-01-22 19:06:52	|INFO |	exit
+23-01-22 19:07:10	|FATAL|	No such file or directory
+23-01-22 19:07:12	|INFO |	exit
+23-01-22 19:32:19	|FATAL|	No such file or directory
+23-01-22 19:32:20	|INFO |	exit
+23-01-22 19:32:23	|FATAL|	No such file or directory
+23-01-22 19:32:24	|INFO |	exit
+23-01-22 19:32:25	|FATAL|	No such file or directory
+23-01-22 19:32:27	|INFO |	exit
+23-01-22 19:34:25	|FATAL|	No such file or directory
+23-01-22 19:34:26	|INFO |	exit

@@ -43,7 +43,6 @@ int main(int argc, const char **argv) {
   // cli(v,o)
 
   // TUI "text user interface"
-  LOG_ERRNO(2);
   menu(v, o);
 
   LOG_INFO("exit");
