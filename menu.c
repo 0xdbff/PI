@@ -182,7 +182,10 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v, Orders *o) {
       return 0;
     }
   }
-  free(input);
+  if (input) {
+    free(input);
+  }
+  puts("Veiculo nao encontrado");
   return 1; // no data found
 }
 
