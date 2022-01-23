@@ -6,12 +6,11 @@ static void menu_print() {
   puts("1=> inserir um novo meio de de mobilidade eletrica.");
   puts("2=> remover um transporte urbano");
   puts("3=> requerir a utilizacao de um meio de transporte.");
-  puts("4=> requerir a alteracao de um pedido de utilizacao em espera");
-  puts("5=> cancelar o pedido de utilizacao.");
-  puts("6=> listagem de todos os meios de transporte");
-  puts("7=> listagem de todos os pedidos efetuados");
-  puts("8=> calcular o custo de utilizacao da ordem requisitada");
-  puts("9=> listar o plano de utilizacao de um determinado veiculo");
+  puts("4=> cancelar o pedido de utilizacao.");
+  puts("5=> listagem de todos os meios de transporte");
+  puts("6=> listagem de todos os pedidos efetuados");
+  puts("7=> calcular o custo de utilizacao da ordem requisitada");
+  puts("8=> listar o plano de utilizacao de um determinado veiculo");
   puts("c=> clear");
   puts("e=> sair");
   puts("q=> sair sem guardar");
@@ -175,9 +174,12 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v, Orders *o) {
         if (verify == 'y') {
           // search for orders that need to be canceled
           cancel_vehicle_plan(&v->data[i], o);
+        } else {
+          return;
         }
       }
       vec_vehicles_rm_at(v, i);
+      LOG_INFO("Vehicle removed");
       free(input);
       return 0;
     }
@@ -244,15 +246,15 @@ static inline uint8_t rm_order_by_id_prompt(Orders *v) {
   for (size_t i = 0; i < v->len; i++) {
     if (input == (&v->data[i])->id) {
       vec_orders_rm_at(v, i);
-      puts("order removed");
+      LOG_INFO("Order removed");
       return 0;
     }
   }
-  puts("nothing found");
+  puts("nada encontrado");
   return 1;
 }
 
-// 07
+// 06
 static inline void list_vehicles(Vehicles *v) {
   for (size_t i = 0; i < v->len; i++) {
     printf("%s\t%s\t%f\t%u\n", (&v->data[i])->id, (&v->data[i])->type,
@@ -260,7 +262,7 @@ static inline void list_vehicles(Vehicles *v) {
   }
 }
 
-// 08
+// 07
 static inline void list_orders(Orders *v) {
   for (size_t i = 0; i < v->len; i++) {
     printf("%lu\t%lu\t%s\t%u\t%u\n", (&v->data[i])->id, (&v->data[i])->nif,
@@ -268,23 +270,26 @@ static inline void list_orders(Orders *v) {
   }
 }
 
-// 09
+// 07
 static inline uint8_t print_calculated_cost_prompt_id(Vehicles *v, Orders *o) {
-  size_t input = 0;
-  if (scanf("%lu", &input) != 1) {
-    return 5;
-  }
+  size_t input;
+  prompt_oid(&input);
   Order *oid = search_order_by_id(o, input);
   if (oid == NULL) {
-    return 61;
+    puts("Id nao encontrado");
+    return 1;
   }
-  Vehicle *v_id = search_vehicle_by_id(v, oid->id);
-  printf("%f", (v_id->price) * (oid->time));
+  Vehicle *v_id = search_vehicle_by_id(v, oid->v_id);
+  printf("preco de uso calculado: %f eur/min\n", (v_id->price) * (oid->time));
   return 0;
 }
 
-static inline void vehicle_plan(Vehicle *v_id, Orders *o) {
+static inline void vehicle_plan_prompt_id(Vehicles *v, Orders *o) {
+  char *v_id_str = malloc(VEHICLE_ID_MAX_CHARS);
+  prompt_vid(v_id_str);
+  Vehicle *v_id = search_vehicle_by_id(v, v_id_str);
   if (v_id == NULL) {
+    free(v_id_str);
     return;
   }
   size_t t = 0;
@@ -297,6 +302,7 @@ static inline void vehicle_plan(Vehicle *v_id, Orders *o) {
       t += (&o->data[i])->time;
     }
   }
+  free(v_id_str);
 }
 
 void input_switch(Vehicles *v, Orders *o) {
@@ -317,7 +323,9 @@ void input_switch(Vehicles *v, Orders *o) {
     free(control); // free garbage
     input_switch(v, o);
   }
-  free(control);    // free garbage
+  if (control) {
+    free(control); // free garbage
+  }
   printf("\33[0m"); // reset blue color
 
   switch (input) {
@@ -340,11 +348,10 @@ void input_switch(Vehicles *v, Orders *o) {
     list_orders(o);
     break;
   case '7':
-    vehicle_plan(search_vehicle_by_id(v, "M_3"), o);
+    print_calculated_cost_prompt_id(v, o);
     break;
   case '8':
-    break;
-  case '9':
+    vehicle_plan_prompt_id(v, o);
     break;
   case 'c':
     system("clear");
