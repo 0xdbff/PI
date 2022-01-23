@@ -43,7 +43,7 @@ void log_to_file(const char *str);
 #ifndef LOG_ERR
 #define LOG_ERRNO(ERRNO)                                                       \
   fprintf(stderr, LC_ERR "%d : %s!\n" LC_RESET, ERRNO, strerror(ERRNO));       \
-  log_to_file(strerror(ERRNO));
+  log_errno_to_file(ERRNO);
 
 // doesn't log to file
 #define LOG_ERR(STR) fprintf(stderr, LC_ERR "%s" LC_RESET "\n", STR)

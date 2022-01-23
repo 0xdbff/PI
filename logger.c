@@ -24,7 +24,7 @@ void log_errno_to_file(const uint8_t err) {
   FILE *fp = fopen(filename, "a");
   if (ferror(fp))
     return;
-  fprintf(fp, L_FATAL "%.2d-%.2d-%.2d %.2d:%.2d:%.2d\t%s\n", tm->tm_mday,
+  fprintf(fp, "%.2d-%.2d-%.2d %.2d:%.2d:%.2d\t" L_FATAL "%s\n", tm->tm_mday,
           tm->tm_mon + 1, tm->tm_year - 100, tm->tm_hour, tm->tm_min,
           tm->tm_sec, strerror(err));
   fclose(fp);

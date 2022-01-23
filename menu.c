@@ -88,9 +88,40 @@ static inline void prompt_distance(uint32_t *input) {
   }
 }
 
+static inline void list_order(Orders *v, size_t i) {
+  printf("%lu\t%lu\t%s\t%u\t%u\n", (&v->data[i])->id, (&v->data[i])->nif,
+         (&v->data[i])->v_id, (&v->data[i])->time, (&v->data[i])->distance);
+}
+
+static inline void list_order_by_ptr(Order *oid) {
+  printf("%lu\t%lu\t%s\t%u\t%u\n", oid->id, oid->nif, oid->v_id, oid->time,
+         oid->distance);
+}
+
+static inline void log_order(Orders *v, size_t i) {
+  char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 4));
+  sprintf(str, L_INFO "Registered Vehicle ->%lu|%lu|%s|%u|%u|",
+          (&v->data[i])->id, (&v->data[i])->nif, (&v->data[i])->v_id,
+          (&v->data[i])->time, (&v->data[i])->distance);
+  log_to_file(str);
+  free(str);
+}
+
+static inline void log_order_by_ptr(Order *oid) {
+  char *str = malloc(sizeof(char) * (VEHICLE_ID_MAX_CHARS * 4));
+  sprintf(str, L_INFO "Registered Vehicle ->%lu|%lu|%s|%u|%u|", oid->id,
+          oid->nif, oid->v_id, oid->time, oid->distance);
+  log_to_file(str);
+  free(str);
+}
+
 static inline void list_vehicle(Vehicles *v, size_t i) {
   printf("%s\t%s\t%f\t%u\n", (&v->data[i])->id, (&v->data[i])->type,
          (&v->data[i])->price, (&v->data[i])->autonomy);
+}
+
+static inline void list_vehicle_by_ptr(Vehicle *v_id) {
+  printf("%s\t%s\t%f\t%u\n", v_id->id, v_id->type, v_id->price, v_id->autonomy);
 }
 
 static inline void log_vehicle(Vehicles *v, size_t i) {
@@ -99,10 +130,6 @@ static inline void log_vehicle(Vehicles *v, size_t i) {
           (&v->data[i])->type, (&v->data[i])->price, (&v->data[i])->autonomy);
   log_to_file(str);
   free(str);
-}
-
-static inline void list_vehicle_by_ptr(Vehicle *v_id) {
-  printf("%s\t%s\t%f\t%u\n", v_id->id, v_id->type, v_id->price, v_id->autonomy);
 }
 
 static inline void log_vehicle_by_ptr(Vehicle *v_id) {
@@ -238,6 +265,8 @@ static inline uint8_t order_build_prompt(Orders *o, Vehicles *v) {
   if (vid->active == false)
     vid->active = true;
   vec_orders_push(o, order_build(assign_oid(o), nif, vid->id, time, distance));
+  LOG_INFO_NW("Registered Order");
+  log_order(o, (o->len) - 1);
   return 0;
 }
 

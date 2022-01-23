@@ -43,9 +43,10 @@ int main(int argc, const char **argv) {
   // cli(v,o)
 
   // TUI "text user interface"
+  LOG_ERRNO(2);
   menu(v, o);
 
-  log_to_file("exit");
+  LOG_INFO("exit");
   vec_orders_destroy(o);
   vec_vehicles_destroy(v);
   return 0;
