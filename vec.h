@@ -47,7 +47,7 @@ void vec_vehicles_push_at(Vehicles *, size_t i, Vehicle *);
 void vec_vehicles_destroy(Vehicles *);
 void vec_vehicles_reset(Vehicles *v);
 
-/* void menu(Vehicles *, Orders *); */
+void menu(Vehicles *, Orders *);
 Order *search_order_by_id(Orders *v, const size_t id);
 Vehicle *search_vehicle_by_id(Vehicles *v, const char *id);
 
