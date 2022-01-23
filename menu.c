@@ -290,6 +290,7 @@ static inline void vehicle_plan_prompt_id(Vehicles *v, Orders *o) {
   prompt_vid(v_id_str);
   Vehicle *v_id = search_vehicle_by_id(v, v_id_str);
   if (v_id == NULL) {
+    puts("Id nao encontrado");
     free(v_id_str);
     return;
   }
@@ -307,15 +308,18 @@ static inline void vehicle_plan_prompt_id(Vehicles *v, Orders *o) {
 }
 
 void input_switch(Vehicles *v, Orders *o) {
-  // 20 bytes allocated just in case the user writes more than one char and
-  // tries to crash the program, if more than 20 chars are typed undefined
+  // 10 bytes allocated just in case the user writes more than one char and
+  // tries to crash the program, if more than 10 chars are typed undefined
   // behavior wont be present, all the user gets is an Adress boundary error
-  char *control = calloc(20, sizeof(char)); // all chars initialized
+  char *control = calloc(10, sizeof(char)); // all chars initialized
   char input = '\0';
   uint8_t status = 0; // return values 'errno'
   printf("\n\t\033[94m Opcao: ");
   if (scanf("%s", control) != 1) { // just in case a \n leaked from
-    status = 5;                    // previous calls
+    if (control) {
+      free(control); // free gargabe
+    }
+    input_switch(v, o);
   }
   if (control[1] == '\0') { // this garantees the user only typed one char
     input = control[0];
@@ -360,12 +364,11 @@ void input_switch(Vehicles *v, Orders *o) {
     input_switch(v, o);
     break;
   case 'e':
-    if (write_data_err(v, o))
+    if (write_data_err(v, o)) {
       exit(2);
-    // LOG EXIT
+    }
     return;
   case 'q':
-    // LOG EXIT
     return;
   default:
     puts("caracter nao reconhecido!, reinsira");
@@ -376,7 +379,7 @@ void input_switch(Vehicles *v, Orders *o) {
 }
 
 void menu(Vehicles *v, Orders *o) {
-  /* system("clear"); */
+  system("clear");
   if (read_data_err(v, o)) {
     LOG_WARN("continuing without data!");
   }
