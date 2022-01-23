@@ -174,12 +174,10 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v, Orders *o) {
         if (verify == 'y') {
           // search for orders that need to be canceled
           cancel_vehicle_plan(&v->data[i], o);
-        } else {
-          return;
         }
       }
       vec_vehicles_rm_at(v, i);
-      LOG_INFO("Vehicle removed");
+      LOG_INFO("Vehicles removed");
       free(input);
       return 0;
     }
