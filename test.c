@@ -16,6 +16,7 @@ static void test_vehicles_vec() {
   for (size_t i = 0; i < 640000; i++) {
     vec_vehicles_push(v, vehicle_build("M_21", "carro", 3.5, 2));
   }
+
   _assert(((v->capacity == 1048576) && (v->len == 640001)), "vec expand");
   _assert(v_id == (&v->data[0]), "vec memory access");
   // free strings

@@ -35,7 +35,7 @@ void _exit(int errno, Vehicles *v, Orders *o) {
 }
 
 int main(int argc, const char **argv) {
-  /* all_tests(); */
+  all_tests();
   Vehicles *v = vec_vehicles_new();
   Orders *o = vec_orders_new();
 
