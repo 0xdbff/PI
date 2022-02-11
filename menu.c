@@ -1,5 +1,6 @@
 #include "validation.h"
 #include "vec.h"
+#include <string.h>
 
 static void menu_print() {
   puts("_____________________________________________________________");
@@ -203,7 +204,7 @@ static inline uint8_t rm_vehicle_by_id_prompt(Vehicles *v, Orders *o) {
           cancel_vehicle_plan(&v->data[i], o);
         } else {
           puts("aborted!");
-          return;
+          return 1;
         }
       }
       vec_vehicles_rm_at(v, i);
@@ -392,7 +393,7 @@ void input_switch(Vehicles *v, Orders *o) {
     break;
   case 'c':
     system("clear");
-    menu_print(v, o);
+    menu_print();
     input_switch(v, o);
     break;
   case 'e':
